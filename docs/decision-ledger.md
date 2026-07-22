@@ -59,6 +59,10 @@ Append-only. Every decision carries a confidence and a link to the artifact that
 | 47 | **Report provenance is printed in the masthead** — "gemma4:12b (7/7 pieces gated in)" or "deterministic template". A client can always see whether prose was machine-written and how much of it survived the gates. | 90% | report HTML |
 | 48 | Known limit, disclosed not hidden: the gates protect every NUMBER; they do not verify prose LOGIC. A 12B model occasionally garbles causality in otherwise clean prose. The trade bought total data locality — nothing leaves the machine. | 89% | report review |
 
+| 49 | **Live-verification coverage extended to 65 checks** across all 3 domains: deep e2e (5-pass showIf convergence), showIf both directions (4 cases), exact-value toggle round-trip, plausibility banner fire/silent (4 scenarios), session isolation. Two rounds, zero drift. | 93% | `tools/verify-live.mjs`, `.tmp/live-verify/` |
+| 50 | **Two test-harness bugs found and fixed during live verification, zero product bugs.** Both followed the same pattern as the Stage J loyalty fix: comparing a live result against a hand-built "expected" that didn't match what the UI actually collects/reports. (1) summed ALL leaks against `total`, which correctly excludes contingent/unmeasurable by design; (2) computed a "worst case" from only 5 of loyalty's 14 fields. Both diagnosed by independent direct computation BEFORE editing any code. | 94% | graph-engineer/stage-k execution log |
+| 51 | Vercel deploy path: public mirror repo (`CAPP-Financials/sid-site`) imported directly by the user into Vercel's dashboard, bypassing the MCP connector's `create project` 403. Auto-deploys on push to the mirror. | 90% | live URL https://sid-site-phi.vercel.app |
+
 ## Open bets to resolve
 
 - **#13** — is `showIf` enough "guided consultative," or does the deep tier need real probing?
