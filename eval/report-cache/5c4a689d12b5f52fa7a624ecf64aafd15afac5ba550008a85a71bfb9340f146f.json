@@ -1,0 +1,4 @@
+{
+ "model": "gemma4:12b",
+ "response": "{\"prose\": \"The company spent $4.20M, which is 21.00% of total AI spend. This expenditure has no direct link to margin. Because success was measured by activity rather than EBIT, the return on investment for this spending is currently unknown.\"}"
+}

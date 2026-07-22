@@ -1,0 +1,4 @@
+{
+ "model": "gemma4:12b",
+ "response": "{\"pronce\": \"Back-office exception drift occurs when operators improvise on manual overrides. This results in $300K of inconsistent calls, representing 0.0150% of volume. These small errors accumulate over time, creating an inaccurate risk profile for the company.\"}"
+}

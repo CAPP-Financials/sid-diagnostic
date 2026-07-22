@@ -1,0 +1,4 @@
+{
+ "model": "gemma4:12b",
+ "response": "{\"prose\": \"Migration gaps and manual currency handling cause data integrity issues. This results in a lost value of $480K, which is 3.84% of the reward program value. These errors make downstream metrics unreliable.\"}"
+}

@@ -1,0 +1,4 @@
+{
+ "model": "gemma4:12b",
+ "response": "{\"pronce\": \"Fraud costs $3.30M, representing 0.1650% of volume. This amount sits in operations and is reported as gross. It does not appear on the P&L statement because it is a net drag on profitability.\"}"
+}

@@ -1,0 +1,4 @@
+{
+ "model": "gemma4:12b",
+ "response": "{\"prose\": \"The company spent $2.40M, representing 12.00% of AI spend, on systems that were deployed but remained idle. This indicates a lack of engagement with the tools provided, suggesting that investment in these technologies is not yielding active usage.\"}"
+}

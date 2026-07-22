@@ -1,0 +1,4 @@
+{
+ "model": "gemma4:12b",
+ "response": "{\"exec_summary\": \"The firm faces an unrecorded annual loss of $12.4M. This figure represents 0.6220% of volume. The reported range for this loss is between $4.09M and $57.0M. Contingent exposure is excluded from the headline figure and stands at $1.40M.\"}"
+}

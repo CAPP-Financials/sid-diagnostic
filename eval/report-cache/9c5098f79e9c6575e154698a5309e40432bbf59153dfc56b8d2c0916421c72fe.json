@@ -1,0 +1,4 @@
+{
+ "model": "gemma4:12b",
+ "response": "{\"pronce\": \"Shared-infrastructure concentration exposure is a risk where multiple entities use the same third-party provider. The $1.40M figure represents 0.0700% of volume. This concentration creates correlated failure risks that are not captured in individual risk registers.\"}"
+}

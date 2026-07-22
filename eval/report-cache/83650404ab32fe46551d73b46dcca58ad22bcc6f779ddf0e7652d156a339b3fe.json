@@ -1,0 +1,4 @@
+{
+ "model": "gemma4:12b",
+ "response": "{\"exec_summary\": \"The company faces an unrecorded annual loss of $17.3M. This represents 86.72% of the total AI spend. The estimated range for this loss is between $2.13M and $55.0M. Additionally, a separate amount of $3.00M in at-risk spend is currently unmeasurable and remains isolated from these figures.\"}"
+}

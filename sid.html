@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Signal Integrity Diagnostic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --stock:#E9EDE4; --stock-alt:#DCE3D4; --paper:#F6F8F3;
+  --ink:#16211C; --graphite:#5A6560; --faint:#8A938C;
+  --variance:#A32C22; --variance-soft:#A32C221a; --reconciled:#2F5D50;
+  --rule:rgba(22,33,28,.16); --rule-soft:rgba(22,33,28,.08);
+}
+html[data-theme="dark"]{
+  --stock:#101815; --stock-alt:#16211C; --paper:#18231E;
+  --ink:#E6EDE6; --graphite:#9AA79D; --faint:#6E7A72;
+  --variance:#E0655A; --variance-soft:#E0655A1f; --reconciled:#6FBFA5;
+  --rule:rgba(230,237,230,.18); --rule-soft:rgba(230,237,230,.09);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--stock); color:var(--ink); font-family:"Public Sans",system-ui,sans-serif;
+  font-size:16px; line-height:1.65; -webkit-font-smoothing:antialiased}
+.num{font-family:"IBM Plex Mono",ui-monospace,monospace; font-variant-numeric:tabular-nums lining-nums}
+h1,h2,h3{font-family:"Zilla Slab",Georgia,serif; font-weight:600; letter-spacing:-.015em; line-height:1.15; margin:0}
+.wrap{max-width:1080px; margin:0 auto; padding:0 clamp(1rem,4vw,2.5rem)}
+:focus-visible{outline:2px solid var(--variance); outline-offset:3px}
+
+.mast{border-bottom:2px solid var(--ink); padding:2.25rem 0 1.1rem}
+.mast-top{display:flex; justify-content:space-between; align-items:baseline; gap:1rem; flex-wrap:wrap;
+  font-family:"IBM Plex Mono",monospace; font-size:.7rem; letter-spacing:.13em; text-transform:uppercase; color:var(--graphite)}
+.mast h1{font-size:clamp(2rem,5.2vw,3.4rem); margin:.7rem 0 .5rem; max-width:20ch}
+.mast p{margin:0; max-width:56ch; color:var(--graphite); font-size:1.05rem}
+.theme-btn{background:none; border:1px solid var(--rule); color:var(--graphite); cursor:pointer;
+  font-family:"IBM Plex Mono",monospace; font-size:.66rem; letter-spacing:.13em; text-transform:uppercase;
+  padding:.35rem .7rem; border-radius:2px}
+
+.rail-sec{position:sticky; top:0; z-index:20; background:var(--stock); border-bottom:1px solid var(--rule); padding:1.15rem 0 1.25rem}
+.rail-head{display:flex; justify-content:space-between; align-items:flex-end; gap:1rem; flex-wrap:wrap; margin-bottom:.7rem}
+.rail-lab{font-family:"IBM Plex Mono",monospace; font-size:.66rem; letter-spacing:.14em; text-transform:uppercase; color:var(--graphite)}
+.rail-figure{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums;
+  font-size:clamp(1.6rem,4.4vw,2.5rem); font-weight:600; color:var(--variance); line-height:1}
+.rail-range{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums; font-size:.82rem; color:var(--graphite); margin-top:.25rem}
+.rail{position:relative; height:86px; border-left:2px solid var(--ink)}
+.rail-track{position:absolute; left:0; right:0; top:14px; height:18px; background:var(--rule-soft)}
+.rail-gap{position:absolute; top:14px; height:18px;
+  background:repeating-linear-gradient(135deg,var(--variance) 0 1.5px,transparent 1.5px 7px); opacity:.6}
+.rail-anchor,.rail-mark{position:absolute; top:6px; width:2px; height:34px}
+.rail-anchor{background:var(--reconciled)} .rail-mark{background:var(--variance)}
+.rail-anchor::after,.rail-mark::after{content:attr(data-l); position:absolute; top:36px;
+  font-family:"IBM Plex Mono",monospace; font-size:.6rem; letter-spacing:.1em; text-transform:uppercase; white-space:nowrap}
+.rail-anchor::after{left:0; color:var(--reconciled)} .rail-mark::after{right:0; color:var(--variance)}
+.rail-mark.stagger::after{top:var(--lbl-top,50px)}
+.rail-unc{position:absolute; top:64px; height:7px; background:var(--variance-soft);
+  border-left:2px solid var(--variance); border-right:2px solid var(--variance)}
+.rail-unc::after{content:attr(data-l); position:absolute; top:9px; left:0;
+  font-family:"IBM Plex Mono",monospace; font-size:.6rem; letter-spacing:.1em; text-transform:uppercase; color:var(--graphite); white-space:nowrap}
+.rail-empty{position:absolute; inset:0; display:flex; align-items:center; padding-left:1rem;
+  font-family:"IBM Plex Mono",monospace; font-size:.75rem; color:var(--faint)}
+.rail-empty[hidden]{display:none}
+.tier{display:inline-flex; align-items:center; gap:.5rem; font-family:"IBM Plex Mono",monospace;
+  font-size:.66rem; letter-spacing:.12em; text-transform:uppercase; border:1px solid var(--rule);
+  padding:.3rem .6rem; border-radius:2px; color:var(--graphite)}
+.tier b{color:var(--ink)} .tier-dot{width:6px;height:6px;border-radius:50%;background:var(--graphite)}
+.tier[data-t="refined"] .tier-dot{background:var(--reconciled)} .tier[data-t="refined"] b{color:var(--reconciled)}
+
+/* category score rows — generated from CFG.categories, never hardcoded */
+.cats{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:.6rem; margin-top:1.2rem}
+/* A flagged cell is tinted and its figure reddened — how a variance report actually marks
+   an exception. Deliberately not a coloured side-tab. */
+.cat{background:var(--paper); border:1px solid var(--rule); border-radius:2px; padding:.7rem .85rem}
+.cat.warn{background:var(--variance-soft); border-color:var(--variance)}
+.cat.warn .cat-s{color:var(--variance)}
+.cat-l{font-family:"IBM Plex Mono",monospace; font-size:.6rem; letter-spacing:.12em; text-transform:uppercase; color:var(--faint)}
+.cat-n{font-family:"Zilla Slab",serif; font-weight:600; font-size:.98rem; margin:.15rem 0 .3rem}
+.cat-s{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums; font-size:1.3rem; font-weight:600}
+.cat-bar{height:4px; background:var(--rule-soft); margin-top:.4rem; position:relative}
+.cat-bar i{position:absolute; inset:0 auto 0 0; background:var(--reconciled)}
+.cat.warn .cat-bar i{background:var(--variance)}
+
+.ledger{margin:2.5rem 0 0; border-top:1px solid var(--rule)}
+.row{border-bottom:1px solid var(--rule-soft); padding:1.6rem clamp(.6rem,2vw,1.2rem)}
+.row:nth-child(odd){background:var(--stock-alt)}
+.row-n{font-family:"IBM Plex Mono",monospace; font-size:.66rem; letter-spacing:.14em; color:var(--faint)}
+.row h3{font-size:1.12rem; margin:.3rem 0 .2rem; max-width:46ch}
+.row .hint{color:var(--graphite); font-size:.9rem; margin:0 0 1rem; max-width:58ch}
+.opts{display:grid; grid-template-columns:repeat(auto-fit,minmax(155px,1fr)); gap:.55rem}
+.opt{background:var(--paper); border:1px solid var(--rule); border-radius:3px; padding:.7rem .8rem;
+  cursor:pointer; text-align:left; font:inherit; color:inherit; transition:border-color .16s ease, transform .16s ease}
+.opt:hover{border-color:var(--ink); transform:translateY(-1px)}
+.opt[aria-pressed="true"]{border-color:var(--reconciled); box-shadow:inset 3px 0 0 var(--reconciled)}
+.opt .l{display:block; font-weight:600; font-size:.94rem}
+.opt .d{display:block; color:var(--graphite); font-size:.78rem; margin-top:.1rem}
+.sld{width:100%; margin:.4rem 0}
+.sld-v{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums; font-size:.9rem; color:var(--reconciled)}
+.exact{margin-top:.9rem; display:flex; align-items:center; gap:.6rem; flex-wrap:wrap}
+.exact label{font-family:"IBM Plex Mono",monospace; font-size:.68rem; letter-spacing:.09em; text-transform:uppercase; color:var(--graphite)}
+.exact input{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums; font-size:.9rem;
+  background:var(--paper); border:1px solid var(--rule); border-radius:3px; padding:.42rem .6rem; color:var(--ink); width:11rem}
+.exact .tag{font-family:"IBM Plex Mono",monospace; font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; color:var(--reconciled)}
+.exact .tag[hidden]{display:none}
+.derived{font-family:"IBM Plex Mono",monospace; font-size:.7rem; color:var(--graphite)}
+.unitsw{display:inline-flex; border:1px solid var(--rule); border-radius:2px; overflow:hidden}
+.ub{background:var(--paper); border:0; cursor:pointer; font-family:"IBM Plex Mono",monospace;
+  font-size:.72rem; padding:.34rem .6rem; color:var(--graphite)}
+.ub[aria-pressed="true"]{background:var(--ink); color:var(--stock)}
+.rail-pct{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums;
+  font-size:1.05rem; font-weight:600; color:var(--ink); margin-top:.2rem}
+.rail-pct span{color:var(--graphite); font-weight:400; font-size:.82rem}
+.exactish{color:var(--reconciled); font-size:.68rem; letter-spacing:.08em; text-transform:uppercase}
+.warnbar{background:var(--variance-soft); border:1px solid var(--variance); border-radius:2px;
+  padding:.7rem .9rem; margin-top:1rem; font-size:.88rem; color:var(--ink)}
+.warnbar[hidden]{display:none}
+.warnbar b{font-family:"IBM Plex Mono",monospace}
+.leak-units{display:flex; gap:1.1rem; align-items:baseline; flex-wrap:wrap; justify-content:flex-end}
+.leak-sec{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums;
+  font-size:.82rem; color:var(--graphite)}
+
+.bd{margin:2.5rem 0 0}
+.bd h2{font-size:1.5rem; margin-bottom:.35rem}
+.bd>p{color:var(--graphite); margin:0 0 1.4rem; max-width:62ch}
+.leak{border-top:1px solid var(--rule); padding:1.15rem 0}
+.leak-top{display:flex; justify-content:space-between; align-items:baseline; gap:1rem}
+.leak-top strong{font-family:"Zilla Slab",serif; font-weight:600; font-size:1.05rem}
+.leak-amt{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums; font-size:1.12rem; font-weight:600; color:var(--variance)}
+.leak-bar{height:5px; background:var(--rule-soft); margin:.6rem 0 .7rem; position:relative}
+.leak-bar i{position:absolute; inset:0 auto 0 0; background:var(--variance); opacity:.75}
+.leak-math{font-family:"IBM Plex Mono",monospace; font-size:.76rem; color:var(--graphite); line-height:1.75}
+.leak-math em{color:var(--ink); font-style:normal}
+.leak-src{font-family:"IBM Plex Mono",monospace; font-size:.68rem; color:var(--faint); margin-top:.35rem}
+.cta{margin:2.75rem 0 0; background:var(--paper); border:1px solid var(--rule); border-top:2px solid var(--ink);
+  border-radius:2px; padding:1.6rem clamp(1rem,3vw,1.9rem)}
+.cta[hidden]{display:none}
+.cta h2{font-size:1.3rem; margin-bottom:.4rem}
+.cta p{color:var(--graphite); margin:0 0 1.1rem; max-width:60ch}
+.btn{display:inline-block; background:var(--ink); color:var(--stock); text-decoration:none;
+  font-family:"IBM Plex Mono",monospace; font-size:.76rem; letter-spacing:.11em; text-transform:uppercase;
+  padding:.8rem 1.3rem; border-radius:3px; border:1px solid var(--ink); transition:transform .16s ease, opacity .16s ease}
+.btn:hover{transform:translateY(-1px); opacity:.9}
+.method{margin:2.5rem 0 4rem; border-top:2px solid var(--ink); padding-top:1.2rem}
+.method p{color:var(--graphite); font-size:.88rem; max-width:66ch; margin:0 0 .7rem}
+@media (max-width:640px){
+  .rail-sec{position:static} .opts{grid-template-columns:1fr 1fr} .exact input{width:100%}
+  .rail{height:116px} .rail-anchor::after{top:36px} .rail-mark::after{top:50px} .rail-unc{top:82px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<header class="mast"><div class="wrap">
+  <div class="mast-top"><span id="brand">Signal Integrity Diagnostic</span>
+    <button class="theme-btn" id="theme" type="button">Invert</button></div>
+  <h1 id="headline">What your numbers leave out</h1>
+  <p id="sub"></p>
+</div></header>
+
+<section class="rail-sec" aria-live="polite"><div class="wrap">
+  <div class="rail-head">
+    <div><div class="rail-lab">Unrecorded annual exposure</div>
+      <div class="rail-figure num" id="total">&mdash;</div>
+      <div class="rail-pct" id="totalpct"></div>
+      <div class="rail-range num" id="range">Answer the rows below to compute a range</div></div>
+    <div class="tier" id="tier" data-t="estimate"><span class="tier-dot"></span><span>Confidence tier:&nbsp;<b id="tier-l">Estimate</b></span></div>
+  </div>
+  <div class="rail" id="rail"><div class="rail-track"></div><div class="rail-empty" id="rail-empty">no reconciliation yet</div></div>
+  <div class="warnbar" id="warn" hidden></div>
+  <div class="cats" id="cats"></div>
+</div></section>
+
+<main class="wrap">
+  <div class="ledger" id="ledger"></div>
+  <section class="bd" id="bd" hidden>
+    <h2>Where the variance comes from</h2>
+    <p>Each line is computed from the answers above. The arithmetic is printed in full — if an input is wrong, you can see exactly which number moves.</p>
+    <div id="leaks"></div>
+  </section>
+  <section class="cta" id="cta" hidden>
+    <h2>Send yourself the working</h2>
+    <p>This page stores nothing. Nothing you type leaves your browser. The button below opens your mail client with the figures and every assumption filled in, so you have the record and can reply if a line looks wrong.</p>
+    <a class="btn" id="mail" href="#">Email me this result</a>
+  </section>
+  <section class="method">
+    <p><strong>What this is:</strong> an order-of-magnitude reconciliation built from documented failure patterns. Typing real figures into the exact-value fields moves it from Estimate to Refined and narrows the range.</p>
+    <p><strong>What it is not:</strong> a measurement of your organisation. Default rates are practitioner estimates, marked on every line. A band-input questionnaire cannot reach 90% confidence — that requires your actual data, which is a paid engagement and not something this page asks you to upload.</p>
+    <p class="leak-src" id="layers"></p>
+  </section>
+</main>
+
+<script src="sid-engine.js"></script>
+<script src="domains/loyalty.js"></script>
+<script src="domains/banking-fraud.js"></script>
+<script src="domains/enterprise-ai.js"></script>
+<script>
+var Q = new URLSearchParams(location.search);
+var DOMAIN = Q.get('domain') || 'banking-fraud';
+var DEPTH  = Q.get('depth')  || 'deep';
+var CFG = ({ 'loyalty': window.SID_LOYALTY, 'banking-fraud': window.SID_BANKING_FRAUD,
+             'enterprise-ai': window.SID_ENTERPRISE_AI })[DOMAIN];
+/* Fail loudly on an unknown domain. Previously CFG came back undefined and the page died
+   on `CFG.label` with a message that named neither the domain nor the cause. */
+if (!CFG) {
+  document.body.innerHTML = '<div style="padding:2rem;font-family:monospace">' +
+    'Unknown domain "' + String(DOMAIN).replace(/[<>&]/g, '') + '". Known: loyalty, banking-fraud, enterprise-ai.</div>';
+  throw new Error('unknown domain: ' + DOMAIN);
+}
+
+var picked = {}, exact = {};
+
+function sig(v){ var x=Math.abs(v); return v.toFixed(x>=100?0:x>=10?1:2); }
+function nf(n){ return Math.round(n).toLocaleString('en-US'); }
+function usd(n){ if(!isFinite(n)) return '—'; var a=Math.abs(n);
+  if(a>=1e9) return '$'+sig(n/1e9)+'B'; if(a>=1e6) return '$'+sig(n/1e6)+'M';
+  if(a>=1e4) return '$'+sig(n/1e3)+'K'; return '$'+nf(n); }
+function usdx(n){ return '$'+nf(n); }
+function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+
+/* questions visible at this depth, with showIf evaluated against current answers */
+function visibleQs(){
+  var ans = answers();
+  return CFG.questions.filter(function(q){
+    if(DEPTH==='front' && q.depth!=='front') return false;
+    return !q.showIf || SIDEngine.test(q.showIf, ans, {});
+  });
+}
+/* The denominator's own value, needed to resolve any %-entered field. Read from its exact
+   entry if typed, else from the chosen band option. */
+function denomValue(){
+  var d=CFG.denominator; if(!d) return 0;
+  var e=exact[d];
+  return e ? (parseFloat(e.value)||0) : SIDEngine.num(picked[d],0);
+}
+function answers(){
+  var a = {};
+  for(var k in picked) a[k]=picked[k];
+  var dv=denomValue();
+  for(var k in exact){
+    var r=SIDEngine.resolveExact(exact[k], dv);
+    if(!r) continue;
+    /* the engine works in native magnitudes; a %-entered field is converted here, once,
+       from the stored percentage — never from a rounded display */
+    a[k] = (r.usd!==null && r.usd!==undefined) ? r.usd : r.pct;
+    a['exact_'+k]=1;
+  }
+  return a;
+}
+function pctFmt(p){ return (p*100).toFixed(Math.abs(p*100)>=1?2:4)+'%'; }
+/* A factor in a printed working line must be readable back into the arithmetic. nf() rounds
+   to whole numbers, so a share of 0.40 printed as "0" made the line read 20M × 0 × 1 = 8M —
+   absurd to anyone who checks it, which is exactly who this page is for. */
+function fmtFactor(v){
+  var x=Math.abs(v);
+  if(x>=10000) return usdx(v);
+  if(x>=1)     return nf(v);
+  if(x===0)    return '0';
+  return v.toFixed(x<0.01?4:2);
+}
+
+function build(){
+  document.getElementById('brand').textContent = (CFG.label||CFG.id)+' · '+(DEPTH==='front'?'Front door':'Full diagnostic');
+  document.getElementById('sub').textContent =
+    (DEPTH==='front'?'Five questions.':'The full reconciliation.')+' Every figure is computed by fixed arithmetic you can read, and the assumptions are printed next to the answers rather than buried.';
+  document.getElementById('layers').textContent = CFG.categories.map(function(c){return 'Layer '+c.layer+' '+c.label;}).join('  →  ');
+
+  var qs = visibleQs(), out='';
+  qs.forEach(function(q,i){
+    out+='<div class="row" data-q="'+q.id+'"><div class="row-n">Row '+String(i+1).padStart(2,'0')+'</div>'+
+         '<h3>'+esc(q.title||q.id)+'</h3>'+(q.hint?'<p class="hint">'+esc(q.hint)+'</p>':'');
+    if(q.options){
+      out+='<div class="opts" role="group">';
+      q.options.forEach(function(o,j){
+        var on = String(picked[q.id])===String(o.v);
+        out+='<button class="opt" type="button" aria-pressed="'+on+'" data-q="'+q.id+'" data-i="'+j+'">'+
+             '<span class="l">'+esc(o.l||o.v)+'</span>'+(o.desc?'<span class="d">'+esc(o.desc)+'</span>':'')+'</button>';
+      });
+      out+='</div>';
+    }
+    if(q.type==='slider'){
+      var v = picked[q.id]!==undefined?picked[q.id]:q.default;
+      out+='<input class="sld" type="range" min="'+q.min+'" max="'+q.max+'" value="'+v+'" data-s="'+q.id+'">'+
+           '<div class="sld-v" id="sv-'+q.id+'">'+v+'</div>';
+    }
+    if(q.exact){
+      var cur=exact[q.id]||{value:'',unit:'usd'};
+      out+='<div class="exact"><label for="x-'+q.id+'">'+esc(q.exactLabel||'Exact value')+'</label>';
+      if(q.units && q.units.length>1){
+        out+='<span class="unitsw">';
+        q.units.forEach(function(u){
+          out+='<button type="button" class="ub" data-u="'+q.id+'" data-unit="'+u+'" aria-pressed="'+(cur.unit===u)+'">'+(u==='pct'?'%':'$')+'</button>';
+        });
+        out+='</span>';
+      }
+      out+='<input id="x-'+q.id+'" type="number" inputmode="decimal" min="0" step="any" placeholder="optional" value="'+(cur.value)+'" data-x="'+q.id+'">'+
+           '<span class="tag" id="tag-'+q.id+'" '+(exact[q.id]?'':'hidden')+'>exact ✓</span>'+
+           '<span class="derived" id="der-'+q.id+'"></span></div>';
+    }
+    out+='</div>';
+  });
+  document.getElementById('ledger').innerHTML=out;
+
+  document.querySelectorAll('.opt').forEach(function(b){
+    b.addEventListener('click',function(){
+      var q=b.dataset.q;
+      picked[q]=CFG.questions.find(function(x){return x.id===q;}).options[+b.dataset.i].v;
+      build(); recalc();   /* rebuild: a showIf elsewhere may now match */
+    });
+  });
+  document.querySelectorAll('input[data-s]').forEach(function(s){
+    s.addEventListener('input',function(){ picked[s.dataset.s]=+s.value;
+      document.getElementById('sv-'+s.dataset.s).textContent=s.value; recalc(); });
+  });
+  document.querySelectorAll('.ub').forEach(function(b){
+    b.addEventListener('click',function(){
+      var q=b.dataset.u, u=b.dataset.unit;
+      var e=exact[q]||{value:'',unit:'usd'};
+      if(e.unit===u) return;
+      /* switching units CONVERTS the current figure rather than reinterpreting it, so the
+         displayed quantity keeps its meaning; the newly chosen unit becomes authoritative */
+      var dv=denomValue(), v=parseFloat(e.value);
+      if(isFinite(v)&&dv) e.value = (u==='pct') ? v/dv : v*dv;
+      e.unit=u; exact[q]=e;
+      build(); recalc();
+    });
+  });
+  document.querySelectorAll('input[data-x]').forEach(function(inp){
+    inp.addEventListener('input',function(){
+      var q=inp.dataset.x, v=parseFloat(inp.value);
+      var u=(exact[q]&&exact[q].unit)||'usd';
+      if(isFinite(v)&&v>0) exact[q]={value:v,unit:u}; else delete exact[q];
+      /* recalc only — never build(). Rebuilding the ledger on each keystroke destroys and
+         recreates this input, which reverses and drops characters as you type. Only option
+         clicks can change a showIf predicate, so only they need a rebuild. */
+      var tag=inp.parentNode.querySelector('.tag'); if(tag) tag.hidden=!exact[q];
+      recalc();
+    });
+  });
+}
+
+/* the working line is GENERATED from the leak's mul terms, so it cannot drift
+   from the arithmetic it claims to show */
+function working(L, a, sc){
+  function term(t){
+    if(t.lit!==undefined) return t.lit<1 ? '<em>'+(t.lit*100).toFixed(t.lit<0.001?3:2)+'%</em>' : '<em>'+nf(t.lit)+'</em>';
+    /* Render the resulting value, then name where it came from. Printing "(1 − x)" instead
+       would leave a reader multiplying a parenthesis; printing nothing — which is what
+       happened before this case existed — left a blank factor in the middle of the sum. */
+    if(t.oneMinus!==undefined){
+      var iv = SIDEngine.factor(t.oneMinus, a, sc);
+      return '<em>'+fmtFactor(1-iv)+'</em> <span style="opacity:.7">(1 &minus; '+esc(t.oneMinus.ans||'value')+')</span>';
+    }
+    if(t.ans!==undefined){
+      var v = a['exact_'+t.ans]!==undefined && isFinite(parseFloat(a[t.ans]))
+            ? parseFloat(a[t.ans]) : SIDEngine.num(a[t.ans], t.def);
+      return '<em>'+fmtFactor(v)+'</em>'+(a['exact_'+t.ans]?'':(a[t.ans]===undefined?' <span style="opacity:.7">(assumed)</span>':''));
+    }
+    if(t.score!==undefined) return '<em>'+((100-sc[t.score])/t.pivot).toFixed(2)+'</em>';
+    return '';
+  }
+  var s = L.mul.map(term).join(' × ');
+  if(L.minus) s += ' &minus; '+L.minus.map(term).join(' × ');
+  var v = SIDEngine.product(L.mul,a,sc) - (L.minus?SIDEngine.product(L.minus,a,sc):0);
+  if(L.floor!==undefined) v=Math.max(L.floor,v);
+  return s+' = <em>'+usdx(Math.round(v))+'</em>';
+}
+
+function ready(){
+  var qs = visibleQs().filter(function(q){ return q.options; });
+  return qs.length && qs.every(function(q){ return picked[q.id]!==undefined; });
+}
+
+function recalc(){
+  var catsEl=document.getElementById('cats');
+  if(!ready()){
+    document.getElementById('total').textContent='—';
+    document.getElementById('range').textContent='Answer the rows below to compute a range';
+    document.getElementById('rail-empty').hidden=false;
+    document.querySelectorAll('.rail-gap,.rail-mark,.rail-anchor,.rail-unc').forEach(function(e){e.remove();});
+    document.getElementById('totalpct').textContent='';
+    document.getElementById('warn').hidden=true;
+    catsEl.innerHTML=''; document.getElementById('bd').hidden=true;
+    document.getElementById('cta').hidden=true; return;
+  }
+  var a=answers(), r=SIDEngine.compute(CFG,a), reported=SIDEngine.num(a.reported,0);
+  document.getElementById('rail-empty').hidden=true;
+
+  var net=Math.max(0,r.total-reported);
+  document.getElementById('total').textContent=usd(net);
+  /* The interval is asymmetric (input ranges are multiplicative), so a "±N%" figure would
+     imply a symmetry it does not have. State the interval, and say what narrows it. */
+  document.getElementById('range').textContent='Range '+usd(Math.max(0,r.lo-reported))+' – '+usd(Math.max(0,r.hi-reported))+
+    (r.refined?'':'  ·  supply exact figures to narrow')+
+    (reported?'  ·  after the '+usd(reported)+' your P&L already records':'');
+
+  /* the same figure as a share of the business, in parallel */
+  /* the denominator's name comes from the config — hardcoding "volume" labelled AI spend
+     and loyalty reward value as "volume", which is simply wrong in front of a client */
+  var dname=CFG.denominatorLabel||'the denominator';
+  document.getElementById('totalpct').innerHTML = r.denominator
+    ? pctFmt(r.pct.point)+' of '+esc(dname)+' <span>('+pctFmt(r.pct.lo)+' – '+pctFmt(r.pct.hi)+')</span>'
+    : '';
+
+  /* implausible share: report the real figure, flag it, change nothing */
+  var warn=document.getElementById('warn');
+  if(r.implausible){
+    var big=CFG.leaks.filter(function(L){return L.id===r.largestLeak;})[0];
+    warn.innerHTML='This works out to <b>'+pctFmt(r.pct.point)+'</b> of '+esc(dname)+
+      ', past the '+pctFmt(r.plausibleMax)+' mark. That is high enough that an input is probably wrong — '+
+      'the biggest contributor is <b>'+esc(big?big.name:r.largestLeak)+'</b>. The figure above is not capped; check that line first.';
+    warn.hidden=false;
+  } else warn.hidden=true;
+
+  /* derived counterpart beside each exact field */
+  CFG.questions.forEach(function(q){
+    var el=document.getElementById('der-'+q.id); if(!el) return;
+    var e=exact[q.id];
+    if(!e||!(q.units&&q.units.length>1)){ el.textContent=''; return; }
+    var res=SIDEngine.resolveExact(e,r.denominator);
+    if(!res){ el.textContent=''; return; }
+    el.textContent = e.unit==='pct'
+      ? '= '+usd(res.usd)
+      : (r.denominator? '= '+pctFmt(res.pct)+' of '+dname : '');
+  });
+
+  var tier=document.getElementById('tier');
+  tier.dataset.t=r.refined?'refined':'estimate';
+  document.getElementById('tier-l').textContent=r.refined?'Refined':'Estimate';
+
+  /* category rows — one per CFG.categories entry, generated not hardcoded */
+  catsEl.innerHTML=CFG.categories.map(function(c){
+    var s=r.scores[c.id], warn=s<55;
+    return '<div class="cat'+(warn?' warn':'')+'"><div class="cat-l">Layer '+c.layer+'</div>'+
+      '<div class="cat-n">'+esc(c.label)+'</div><div class="cat-s num">'+s+'</div>'+
+      '<div class="cat-bar"><i style="width:'+s+'%"></i></div></div>';
+  }).join('');
+
+  var rail=document.getElementById('rail');
+  rail.querySelectorAll('.rail-gap,.rail-mark,.rail-anchor,.rail-unc').forEach(function(e){e.remove();});
+  var scale=r.hi*1.14||1, pct=function(v){return Math.max(0,Math.min(100,v/scale*100));};
+  function add(cls,left,width,label){ var d=document.createElement('div'); d.className=cls;
+    d.style.left=left+'%'; if(width!=null) d.style.width=Math.max(0,width)+'%';
+    if(label) d.setAttribute('data-l',label); rail.appendChild(d); return d; }
+  add('rail-gap',pct(reported),pct(r.total)-pct(reported));
+  var mk=add('rail-mark',pct(r.total),null,'SID measures '+usd(r.total));
+  add('rail-anchor',pct(reported),null,(CFG.anchorLabel||'P&L shows')+' '+usd(reported));
+  /* when the two markers sit close together their labels overlap — drop the measured
+     label to a second line rather than letting the two run into each other */
+  if(pct(r.total)-pct(reported) < 30){ mk.style.setProperty('--lbl-top','50px'); mk.classList.add('stagger'); }
+  add('rail-unc',pct(r.lo),pct(r.hi)-pct(r.lo),'plausible range');
+
+  var max=Math.max.apply(null,CFG.leaks.map(function(L){return r.leaks[L.id];}))||1;
+  document.getElementById('leaks').innerHTML=CFG.leaks.map(function(L){
+    var b=r.byLeak[L.id], nat=b.natural;
+    /* lead with whichever unit is actually known; show the other alongside. A leak linear
+       in the denominator has a % that does not move with the denominator estimate — say so,
+       because that is the strongest claim on the page. */
+    var lead = nat.unit==='pct' ? pctFmt(b.pct.point) : usd(b.usd.point);
+    var other= nat.unit==='pct' ? usd(b.usd.point)+' at the '+dname+' shown' : pctFmt(b.pct.point)+' of '+dname;
+    var note = nat.denominatorIndependent ? '<span class="exactish">independent of '+esc(dname)+'</span>'
+             : nat.valueIndependent       ? '<span class="exactish">fixed in dollars</span>' : '';
+    return '<div class="leak"><div class="leak-top"><strong>'+esc(L.name)+'</strong>'+
+      '<span class="leak-units"><span class="leak-sec">'+other+'</span> '+note+
+      '<span class="leak-amt num">'+lead+'</span></span></div>'+
+      '<div class="leak-bar"><i style="width:'+(r.leaks[L.id]/max*100)+'%"></i></div>'+
+      '<div class="leak-math">'+working(L,a,r.scores)+'</div>'+
+      '<div class="leak-math" style="color:var(--graphite)">'+esc(L.why||'')+'</div>'+
+      '<div class="leak-src">Case '+esc(L.case||'—')+' · rates are practitioner defaults — adjust with your own data</div></div>';
+  }).join('');
+  document.getElementById('bd').hidden=false;
+
+  /* mailto — the complete record, no backend. Built from config so every domain gets it. */
+  var L=['Signal Integrity Diagnostic — '+(CFG.label||CFG.id),'',
+    'Unrecorded annual exposure: '+usd(net),
+    'Range: '+usd(Math.max(0,r.lo-reported))+' - '+usd(Math.max(0,r.hi-reported))+' (+/-'+Math.round(r.width*100)+'%)',
+    'Computed gross exposure: '+usd(r.total)+'   less '+(CFG.anchorLabel||'already recorded')+': '+usd(reported),
+    'Confidence tier: '+(r.refined?'Refined':'Estimate')+' ('+r.precisionCount+' of '+(CFG.refinedAt||3)+' precision inputs supplied)','',
+    'SCORES'];
+  CFG.categories.forEach(function(c){ L.push('  Layer '+c.layer+' '+c.label+': '+r.scores[c.id]+'/100'); });
+  L.push('','INPUTS');
+  visibleQs().forEach(function(q){
+    var v = exact[q.id]!==undefined ? exact[q.id] : picked[q.id];
+    if(v!==undefined) L.push('  '+(q.title||q.id)+': '+v+(exact[q.id]!==undefined?' (exact)':''));
+  });
+  L.push('','BREAKDOWN');
+  CFG.leaks.forEach(function(Lk){
+    L.push('  '+Lk.name+': '+usd(r.leaks[Lk.id]));
+    L.push('    '+working(Lk,a,r.scores).replace(/<[^>]+>/g,''));
+    L.push('    Case '+(Lk.case||'—'));
+  });
+  L.push('','Default rates are practitioner estimates, not measurements of this organisation.');
+  L.push('Reaching 90% confidence requires actual source data.');
+  document.getElementById('mail').href='mailto:'+(CFG.contact||'')+
+    '?subject='+encodeURIComponent((CFG.label||CFG.id)+' variance check — '+usd(net)+' unrecorded')+
+    '&body='+encodeURIComponent(L.join('\n'));
+  document.getElementById('cta').hidden=false;
+
+  window._sid=r;
+}
+
+var t=document.getElementById('theme');
+try{ if(localStorage.sidTheme) document.documentElement.dataset.theme=localStorage.sidTheme; }catch(e){}
+t.addEventListener('click',function(){
+  var n=document.documentElement.dataset.theme==='dark'?'light':'dark';
+  document.documentElement.dataset.theme=n; try{localStorage.sidTheme=n;}catch(e){}
+});
+build(); recalc();
+</script>
+</body>
+</html>

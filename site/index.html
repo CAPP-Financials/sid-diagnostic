@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Signal Integrity Diagnostic — what your numbers leave out</title>
+<meta name="description" content="Free reconciliation checks for banking fraud operations, enterprise AI spend, and loyalty programmes. Fixed arithmetic, shown in the open. Nothing you type leaves your browser.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@600;700&family=Public+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --stock:#E9EDE4; --stock-alt:#DCE3D4; --paper:#F6F8F3;
+  --ink:#16211C; --graphite:#5A6560; --variance:#A32C22; --reconciled:#2F5D50;
+  --rule:rgba(22,33,28,.16);
+}
+*{box-sizing:border-box}
+body{margin:0; background:var(--stock); color:var(--ink);
+  font:16px/1.65 "Public Sans",system-ui,sans-serif; -webkit-font-smoothing:antialiased}
+.wrap{max-width:980px; margin:0 auto; padding:0 clamp(1rem,4vw,2.5rem)}
+h1,h2,h3{font-family:"Zilla Slab",Georgia,serif; font-weight:600; line-height:1.15; margin:0}
+.mono{font-family:"IBM Plex Mono",monospace}
+.kicker{font:600 10px "IBM Plex Mono",monospace; letter-spacing:.14em; text-transform:uppercase; color:var(--graphite)}
+.mast{border-bottom:2px solid var(--ink); padding:3rem 0 1.4rem}
+.mast h1{font-size:clamp(2.1rem,5.5vw,3.4rem); max-width:18ch; margin:.5rem 0}
+.mast p{max-width:58ch; color:var(--graphite); font-size:1.06rem; margin:0}
+.cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1rem; margin:2.2rem 0}
+.card{background:var(--paper); border:1px solid var(--rule); border-top:2px solid var(--ink); padding:1.3rem 1.4rem; display:flex; flex-direction:column}
+.card h2{font-size:1.35rem; margin:.35rem 0 .4rem}
+.card p{color:var(--graphite); font-size:.92rem; margin:0 0 1.1rem; flex:1}
+.card .links{display:flex; gap:.6rem; flex-wrap:wrap}
+.btn{display:inline-block; text-decoration:none; font:600 12px "IBM Plex Mono",monospace;
+  letter-spacing:.1em; text-transform:uppercase; padding:.7rem 1rem; border-radius:3px;
+  transition:transform .16s ease}
+.btn:hover{transform:translateY(-1px)}
+.btn.solid{background:var(--ink); color:var(--stock); border:1px solid var(--ink)}
+.btn.line{background:none; color:var(--ink); border:1px solid var(--rule)}
+.row{background:var(--stock-alt); border:1px solid var(--rule); padding:1.2rem 1.4rem; margin:0 0 2.2rem;
+  display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap}
+.row h3{font-size:1.1rem}
+.row p{color:var(--graphite); font-size:.9rem; margin:.15rem 0 0; max-width:52ch}
+.method{border-top:2px solid var(--ink); margin:2.5rem 0 3.5rem; padding-top:1.1rem;
+  color:var(--graphite); font-size:.86rem; max-width:70ch}
+.method b{color:var(--ink)}
+a.mail{color:var(--reconciled)}
+</style>
+</head>
+<body>
+<header class="mast"><div class="wrap">
+  <div class="kicker">Signal Integrity Diagnostic · Layer 0 Signal Capture → Layer 1 Signal Audit → Layer 2 Distortion Detection</div>
+  <h1>What your numbers leave out</h1>
+  <p>A reconciliation between what your books record and what the exposure actually is. Every figure is computed by fixed arithmetic you can read on the page — no account, no upload, and nothing you type leaves your browser.</p>
+</div></header>
+
+<main class="wrap">
+  <div class="cards">
+    <div class="card">
+      <div class="kicker">Banking</div>
+      <h2>Settlement &amp; fraud operations</h2>
+      <p>The loss window between a fraudulent transaction and your books noticing it, the good customers your fraud rules turn away, and the liability the 2026 mandate moved onto you.</p>
+      <div class="links"><a class="btn solid" href="banking-fraud-front.html">3-minute check</a>
+      <a class="btn line" href="banking-fraud-deep.html">Full diagnostic</a></div>
+    </div>
+    <div class="card">
+      <div class="kicker">Enterprise AI</div>
+      <h2>AI &amp; GenAI pilot ROI</h2>
+      <p>How much of the AI budget is unprovable, untraced to margin, idle after deploy, or spent where the documented returns are not. The percentages hold even when the budget figure is a guess.</p>
+      <div class="links"><a class="btn solid" href="enterprise-ai-front.html">3-minute check</a>
+      <a class="btn line" href="enterprise-ai-deep.html">Full diagnostic</a></div>
+    </div>
+    <div class="card">
+      <div class="kicker">Loyalty</div>
+      <h2>Reward programme leakage</h2>
+      <p>Incentive abuse, data foundations that make every metric unreliable, ROI reported without subtracting fraud, and lessons one market learns that the next one repeats.</p>
+      <div class="links"><a class="btn solid" href="loyalty-front.html">3-minute check</a>
+      <a class="btn line" href="loyalty-deep.html">Full diagnostic</a></div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div><h3>What the paid tier looks like</h3>
+    <p>A sample of the full report — every number computed deterministically, the narrative machine-written on a local model and gated so it can only quote computed figures, and every recommendation carrying the condition under which it fails.</p></div>
+    <a class="btn solid" href="sample-report.html">See a sample report</a>
+  </div>
+
+  <div class="method">
+    <p><b>How honest is this?</b> The free checks are order-of-magnitude estimates from banded inputs, and they say so — the range is computed from the actual input uncertainty, never asserted. Typing your real figures narrows it on screen. Reaching verified precision requires your actual data, which is a paid engagement and not something these pages ask you to upload.</p>
+    <p>Built by Purushottam Kumar · <a class="mail" href="mailto:193purushottam@gmail.com">193purushottam@gmail.com</a></p>
+  </div>
+</main>
+</body>
+</html>

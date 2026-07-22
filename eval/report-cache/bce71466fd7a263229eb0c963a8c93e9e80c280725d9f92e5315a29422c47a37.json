@@ -1,0 +1,4 @@
+{
+ "model": "gemma4:12b",
+ "response": "{\"prose\": \"An RPA script labeled as an agent is being measured against incorrect performance benchmarks. This results in a cost of $792K, which represents 3.96% of AI spend. The tool was not designed to meet the specific requirements of these metrics.\"}"
+}

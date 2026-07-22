@@ -1,0 +1,4 @@
+{
+ "model": "gemma4:12b",
+ "response": "{\"prose\": \"The reported ROI is inflated because it is calculated using the gross value of the reward program. The $334K in fraud represents 2.67% of the total program value, meaning budget allocation is based on inaccurate data.\"}"
+}

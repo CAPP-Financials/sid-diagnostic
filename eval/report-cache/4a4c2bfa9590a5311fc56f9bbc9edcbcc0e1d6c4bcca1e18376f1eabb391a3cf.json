@@ -1,0 +1,4 @@
+{
+ "model": "gemma4:12b",
+ "response": "{\"prose\": \"The unhedged liability share is $1.80M, representing 0.0900% of volume. This amount may have shifted from the network or customer to the institution's balance sheet.\"}"
+}

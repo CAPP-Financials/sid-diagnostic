@@ -1,0 +1,4 @@
+{
+ "model": "gemma4:12b",
+ "response": "{\"prose\": \"Incentive abuse and coupon stacking resulted in $863K in lost rewards. This represents 6.90% of the total reward program value. Current rules are not calibrated to customer value, allowing reward value to leak out at the bottom.\"}"
+}

@@ -1,0 +1,7 @@
+.tmp/
+.env
+temporary screenshots/
+node_modules/
+eval/runs/
+reports/
+graph-engineer/

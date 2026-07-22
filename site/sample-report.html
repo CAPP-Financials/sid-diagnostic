@@ -1,0 +1,74 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Signal Integrity Diagnostic — Banking · Settlement &amp; Fraud</title>
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@600;700&family=Public+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+body{background:#E9EDE4;color:#16211C;font:15px/1.65 "Public Sans",system-ui,sans-serif;margin:0}
+.wrap{max-width:860px;margin:0 auto;padding:40px 28px}
+h1,h2,h3{font-family:"Zilla Slab",Georgia,serif;font-weight:600;line-height:1.15;margin:0}
+.mono{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
+.mast{border-bottom:2px solid #16211C;padding-bottom:14px;margin-bottom:22px}
+.kicker{font:600 10px "IBM Plex Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:#5A6560}
+h1{font-size:30px;margin:6px 0 2px}
+.headline{background:#F6F8F3;border:1px solid rgba(22,33,28,.16);border-top:2px solid #16211C;padding:18px 20px;margin:18px 0}
+.big{font:600 34px "IBM Plex Mono",monospace;color:#A32C22}
+.range{color:#5A6560;font-size:13px}
+.apart{font-size:13px;color:#5A6560;margin-top:6px}
+.prose{margin:.5rem 0;max-width:64ch}
+section.leak{border-top:1px solid rgba(22,33,28,.16);padding:16px 0}
+section.leak .top{display:flex;justify-content:space-between;gap:14px;align-items:baseline}
+section.leak h3{font-size:17px}
+.amt{font:600 17px "IBM Plex Mono",monospace;color:#A32C22;text-align:right;white-space:nowrap}
+.amt .p{display:block;font-weight:400;font-size:11px;color:#5A6560}
+section.contingent .amt,section.unmeasurable .amt{color:#5A6560}
+.rec{background:#F6F8F3;border:1px solid rgba(22,33,28,.14);padding:10px 12px;margin-top:8px;font-size:13.5px}
+.caveat{color:#A32C22;font-size:12.5px;margin-top:6px}
+.method{border-top:2px solid #16211C;margin-top:26px;padding-top:12px;color:#5A6560;font-size:12.5px;max-width:70ch}
+@media print{body{background:#fff}.wrap{padding:0}}
+</style></head><body><div class="wrap">
+<div class="mast"><div class="kicker">Signal Integrity Diagnostic · Banking · Settlement &amp; Fraud · Estimate tier · narrative: gemma4:12b (7/7 pieces gated in)</div>
+<h1>What the numbers leave out</h1></div>
+<p class="prose"><strong>Summary.</strong> The firm faces an unrecorded annual loss of $12.4M. This figure represents 0.6220% of volume. The reported range for this loss is between $4.09M and $57.0M. Contingent exposure is excluded from the headline figure and stands at $1.40M.</p>
+<div class="headline"><div class="kicker">Unrecorded annual exposure</div>
+<div class="big mono">$12.4M</div>
+<div class="range mono">Range $4.09M – $57.0M · 0.6220% of volume · Confidence tier: Estimate</div>
+<div class="apart">Contingent exposure, reported apart from the headline: <span class="mono">$1.40M</span></div>
+
+</div>
+<section class="leak loss">
+  <div class="top"><h3>Invisible loss window</h3><div class="amt">$5.04M
+    <span class="p">0.2520% of volume</span></div></div>
+  <p class="prose">The $5.04M loss represents a 0.2520% of volume. This amount is only identified after settlement, making the exposure window invisible during active trading.</p>
+  <div class="rec"><strong>Move fraud loss to a real-time signal.</strong> Batch reconciliation leaves the exposure window invisible while it is open; a streaming loss signal closes it.<div class="caveat">Where this fails: real-time flags that reverse on later context, such as a legitimate chargeback, read as fraud until settlement catches up.</div></div>
+</section>
+<section class="leak loss">
+  <div class="top"><h3>Over-blocking, net of fraud prevented</h3><div class="amt">$2.00M
+    <span class="p">0.1000% of volume</span></div></div>
+  <p class="prose">Over-blocking, net of fraud prevented is $2.00M. This represents 0.1000% of volume. Blunt thresholds stop fraud but also block legitimate transactions. These lost customers are not included in the fraud figures.</p>
+  <div class="rec"><strong>Calibrate blocking thresholds to customer value.</strong> Blunt thresholds stop fraud by also stopping revenue; tier the response to the customer relationship.<div class="caveat">Where this fails: a high-value customer who genuinely is committing fraud — tiering by value raises exposure to exactly that case.</div></div>
+</section>
+<section class="leak loss">
+  <div class="top"><h3>Unhedged liability share</h3><div class="amt">$1.80M
+    <span class="p">0.0900% of volume</span></div></div>
+  <p class="prose">The unhedged liability share is $1.80M, representing 0.0900% of volume. This amount may have shifted from the network or customer to the institution's balance sheet.</p>
+  <div class="rec"><strong>Re-map liability exposure to the current mandate.</strong> Coverage assumed under prior terms may no longer hold now that system-breach liability sits with the institution.<div class="caveat">Where this fails: jurisdiction-specific carve-outs can leave pockets where the old terms still apply.</div></div>
+</section>
+<section class="leak loss">
+  <div class="top"><h3>Back-office exception drift</h3><div class="amt">$300K
+    <span class="p">0.0150% of volume</span></div></div>
+  <p class="prose">Back-office exception drift occurs when operators improvise on manual overrides. This results in $300K of inconsistent calls, representing 0.0150% of volume. These small errors accumulate over time, creating an inaccurate risk profile for the company.</p>
+  <div class="rec"><strong>Codify the exception rules and measure drift.</strong> Every hand-resolved exception without a rule is an operator improvising; codify the common cases and track the residual rate.<div class="caveat">Where this fails: a genuinely novel exception that the codified rule mislabels as routine drift.</div></div>
+</section>
+<section class="leak loss">
+  <div class="top"><h3>Fraud drag the P&amp;L never shows</h3><div class="amt">$3.30M
+    <span class="p">0.1650% of volume</span></div></div>
+  <p class="prose">Fraud costs $3.30M, representing 0.1650% of volume. This amount sits in operations and is reported as gross. It does not appear on the P&amp;L statement because it is a net drag on profitability.</p>
+  <div class="rec"><strong>Put a net fraud-loss line in the P&amp;L.</strong> Gross loss less recoveries is the true drag; while it sits in operations the board never sees it.<div class="caveat">Where this fails: recoveries lag the loss period and distort any single reporting window.</div></div>
+</section>
+<section class="leak contingent">
+  <div class="top"><h3>Shared-infrastructure concentration exposure</h3><div class="amt">$1.40M
+    <span class="p">0.0700% of volume · contingent, outside the headline</span></div></div>
+  <p class="prose">Shared-infrastructure concentration exposure is a risk where multiple entities use the same third-party provider. The $1.40M figure represents 0.0700% of volume. This concentration creates correlated failure risks that are not captured in individual risk registers.</p>
+  <div class="rec"><strong>Map shared dependencies and quantify the correlated exposure.</strong> Concentration on shared tier-3 infrastructure is invisible to any single risk register until it is mapped.<div class="caveat">Where this fails: a dependency that looks shared but is actually isolated — mapping must verify, not assume.</div></div>
+</section>
+<div class="method">Every figure above is computed by fixed arithmetic from the inputs; the narrative is machine-written on this machine and gated so it can quote only computed figures. Default rates are practitioner estimates, marked in the diagnostic. Where a recommendation is given, the condition under which it fails is stated with it.</div>
+</div></body></html>

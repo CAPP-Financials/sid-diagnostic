@@ -1,0 +1,4 @@
+{
+ "model": "gemma4:12b",
+ "response": "{\"prose\": \"Cross-market knowledge silos cost $238K, representing 1.90% of reward program value. This occurs when a failure in one market is repeated in another instead of being shared and prevented across the teams.\"}"
+}

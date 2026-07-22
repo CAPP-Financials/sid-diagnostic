@@ -1,0 +1,4 @@
+{
+ "model": "gemma4:12b",
+ "response": "{\"exec_summary\": \"The company faces an unrecorded annual loss of $1.91M. This amount represents 15.31% of the reward program value. The estimated range for this loss is between $574K and $4.78M. These figures indicate a significant financial impact on thes reward program.\"}"
+}

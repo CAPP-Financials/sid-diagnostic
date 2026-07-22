@@ -1,0 +1,4 @@
+{
+ "model": "gemma4:12b",
+ "response": "{\"prose\": \"Over-blocking, net of fraud prevented is $2.00M. This represents 0.1000% of volume. Blunt thresholds stop fraud but also block legitimate transactions. These lost customers are not included in the fraud figures.\"}"
+}

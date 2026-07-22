@@ -1,0 +1,4 @@
+{
+ "model": "gemma4:12b",
+ "response": "{\"prose\": \"The system repeats errors consistently. Staff must manually correct the same output repeatedly. This costs $153K, which is 0.7650% of total AI spend. The tool lacks a feedback loop to learn from previous corrections.\"}"
+}

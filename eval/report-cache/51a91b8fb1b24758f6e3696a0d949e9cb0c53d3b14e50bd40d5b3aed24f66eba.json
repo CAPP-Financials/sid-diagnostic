@@ -1,0 +1,4 @@
+{
+ "model": "gemma4:12b",
+ "response": "{\"prose\": \"Front-office bias prioritizes visible results over backend efficiency. The firm lost $1.80M, representing 9.00% of AI spend, by focusing on customer-facing tools instead of high-value back-office automation.\"}"
+}

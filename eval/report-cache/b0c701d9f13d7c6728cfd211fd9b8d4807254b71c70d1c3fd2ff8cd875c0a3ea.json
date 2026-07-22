@@ -1,0 +1,4 @@
+{
+ "model": "gemma4:12b",
+ "response": "{\"pronce\": \"The $5.04M loss represents a 0.2520% of volume. This amount is only identified after settlement, making the exposure window invisible during active trading.\"}"
+}

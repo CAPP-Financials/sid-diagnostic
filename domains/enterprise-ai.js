@@ -1,0 +1,270 @@
+/* Enterprise GenAI / AI-pilot ROI domain config.
+ *
+ * Denominator is annual AI spend, not revenue. Every leak here is linear in spend, so every
+ * percentage is arithmetically independent of the spend estimate — this domain is where the
+ * dual-unit property is strongest: "you cannot account for 58% of your AI budget" holds even
+ * when the budget figure itself is a guess.
+ *
+ * Cases: C4, C5, C9, C10, C16, C18 from GBPA-golden-dataset-v0.md.
+ *
+ * The three leak shares (pilot / deployed-unmeasured / front-office) are deliberately
+ * separate drivers rather than complements of one another. The product form cannot express
+ * (1 − x), and faking it with a literal would silently double-count spend. Each share is
+ * asked or assumed openly and printed on its own line.
+ */
+(function (root) {
+  var CFG = {
+    id: 'enterprise-ai',
+    label: 'Enterprise AI · Pilot ROI',
+    noun: 'AI programme',
+    contact: '193purushottam@gmail.com',
+    denominator: 'spend',
+    denominatorLabel: 'AI spend',
+    anchorLabel: 'Written off',
+    /* In this domain a large wasted share is the documented norm — MIT found 95% of pilots
+     * reach no measurable P&L — so a percentage threshold fires constantly and means nothing.
+     * The real absurdity test is losing more than was spent, so the flag sits at 100%.
+     * (Raised from 0.85 once Stage H took the leak count to 8: an 87% result is a plausible
+     * bad programme, not a broken calculation, and a flag that cries wolf gets ignored.) */
+    plausibleMax: 1.00,
+    band: { precisionInputs: ['spend', 'pilot_share', 'deployed_share'], residual: 0.25 },
+    refinedAt: 2,
+
+    categories: [
+      { id: 'capture', layer: 0, label: 'Signal Capture',       base: 60, weight: 0.35, clamp: [5, 100], invert: true,
+        blurb: 'Whether a baseline exists at all. Without one, no delta can be proven either way.' },
+      { id: 'audit',   layer: 1, label: 'Signal Audit',         base: 55, weight: 0.35, clamp: [5, 100], invert: true,
+        blurb: 'Whether reported success traces to margin, or only to activity.' },
+      { id: 'distort', layer: 2, label: 'Distortion Detection', base: 50, weight: 0.30, clamp: [5, 100], invert: true,
+        blurb: 'What is pulling spend away from where the return actually is.' }
+    ],
+
+    questions: [
+      { id: 'spend', type: 'options', depth: 'front', exact: true,
+        exactLabel: 'Exact annual AI spend (USD)',
+        title: 'Annual spend on AI and GenAI initiatives',
+        hint: 'Licences, cloud, vendors and internal build. Last full year.',
+        options: [
+          { v: 250000,    l: 'Under $500K', desc: 'Early',        range: [50000, 500000] },
+          { v: 2000000,   l: '$500K – $5M', desc: 'Scaling',      range: [500000, 5000000] },
+          { v: 20000000,  l: '$5M – $50M',  desc: 'Enterprise',   range: [5000000, 50000000] },
+          { v: 100000000, l: 'Over $50M',   desc: 'Programme',    range: [50000000, 300000000] } ] },
+
+      { id: 'baseline', type: 'options', depth: 'front',
+        title: 'Was a baseline measured before the pilots started?',
+        hint: 'Layer 0, case C5. Without a pre-pilot measurement the improvement cannot be proven — or disproven.',
+        options: [
+          { v: 0.10, l: 'Yes, measured',  desc: 'Recorded pre-launch', d: { capture: -25 } },
+          { v: 0.50, l: 'Some of them',   desc: 'Inconsistent',        d: { capture:  +5 } },
+          { v: 1.00, l: 'No',             desc: 'Shipped and hoped',   d: { capture: +28 } },
+          { v: 0.85, l: 'Don’t know',     desc: 'Not tracked',         d: { capture: +25 } } ] },
+
+      { id: 'measure', type: 'options', depth: 'front',
+        title: 'How is a deployed AI tool judged a success?',
+        hint: 'Layer 1, case C9. Logins and prompt counts are activity, not margin.',
+        options: [
+          { v: 0.05, l: 'Traced to EBIT',   desc: 'One named lever',    d: { audit: -25 } },
+          { v: 0.30, l: 'Mixed',            desc: 'Some traced',        d: { audit:  +5 } },
+          { v: 0.60, l: 'Usage and logins', desc: 'Adoption metrics',   d: { audit: +25 } },
+          { v: 0.55, l: 'It shipped',       desc: 'Deploy counted',     d: { audit: +28 } } ] },
+
+      { id: 'alloc', type: 'options', depth: 'front',
+        title: 'Where does most of the AI budget go?',
+        hint: 'Layer 2, case C18. The largest documented returns sit in back-office automation, where the least budget usually goes.',
+        options: [
+          { v: 0.20, l: 'Mostly back-office', desc: 'Ops, finance, claims', d: { distort: -20 } },
+          { v: 0.40, l: 'Roughly even',       desc: 'Split',                d: { distort:  +5 } },
+          { v: 0.60, l: 'Mostly front-office',desc: 'Sales, marketing',     d: { distort: +22 } },
+          { v: 0.50, l: 'Don’t know',         desc: 'Not broken out',       d: { distort: +20 } } ] },
+
+      { id: 'shadow', type: 'options', depth: 'front',
+        title: 'Do you know how much AI use happens outside sanctioned tools?',
+        hint: 'Layer 2, case C16. Unmeasured shadow use makes an official pilot look like a failure it may not be.',
+        options: [
+          { v: 'measured', l: 'Measured',   desc: 'Telemetry in place', d: { distort: -15 } },
+          { v: 'guessed',  l: 'Rough idea', desc: 'Anecdotal',          d: { distort:  +8 } },
+          { v: 'unknown',  l: 'No idea',    desc: 'Invisible',          d: { distort: +22, capture: +10 } } ] },
+
+      { id: 'pilot_share', type: 'exact-only', depth: 'front', exact: true, units: ['usd', 'pct'],
+        exactLabel: 'Share of spend still in pilots',
+        range: [0.20, 0.70],
+        title: 'How much of the budget is still pre-production pilots?',
+        hint: 'Optional. Left blank, 40% is assumed — stated on the line it affects.' },
+
+      { id: 'deployed_share', type: 'exact-only', depth: 'deep', exact: true, units: ['usd', 'pct'],
+        exactLabel: 'Share deployed but unmeasured',
+        range: [0.15, 0.55],
+        title: 'How much is deployed but has no measured business result?',
+        hint: 'Optional. Left blank, 35% is assumed.' },
+
+      { id: 'reported', type: 'exact-only', depth: 'front', exact: true, units: ['usd', 'pct'],
+        exactLabel: 'AI spend already written off',
+        title: 'How much of this spend has already been recognised as a loss?',
+        hint: 'Optional. Sets the left anchor, so the variance is what the books have not yet caught.' },
+
+      { id: 'kill', type: 'options', depth: 'deep',
+        title: 'What happens to an initiative that is not working?',
+        hint: 'Layer 0. Only a quarter of firms report a disciplined stop process; without one, failed spend keeps compounding.',
+        options: [
+          { v: 'stop',    l: 'Stopped on a gate', desc: 'Defined criteria', d: { capture: -18 } },
+          { v: 'drift',   l: 'Quietly drifts',    desc: 'No owner',         d: { capture: +18 } },
+          { v: 'never',   l: 'Nothing is killed', desc: 'All still open',   d: { capture: +25 } } ] },
+
+      { id: 'kill_why', type: 'options', depth: 'deep',
+        showIf: { ans: 'kill', op: '!=', v: 'stop' },
+        title: 'What keeps a failing initiative alive?',
+        hint: 'Only asked where there is no stop gate.',
+        options: [
+          { v: 'sunk',    l: 'Sunk cost',     desc: 'Too much spent',    d: { distort: +15 } },
+          { v: 'sponsor', l: 'Sponsor',       desc: 'Politically owned', d: { distort: +18 } },
+          { v: 'unclear', l: 'Nobody decides',desc: 'No decision right', d: { capture: +15 } } ] },
+
+      { id: 'feedback', type: 'options', depth: 'deep',
+        title: 'Does the tool retain feedback and improve, or restart every time?',
+        hint: 'Layer 2, case C17 — the MIT NANDA failure mode: generic tools that never learn the enterprise context.',
+        options: [
+          { v: 'retains', l: 'Retains',  desc: 'Adapts to context', d: { distort: -18 } },
+          { v: 'partial', l: 'Partly',   desc: 'Some memory',       d: { distort:  +6 } },
+          { v: 'none',    l: 'Restarts', desc: 'No memory',         d: { distort: +20 } } ] },
+
+      /* ── Stage H drivers for C4, C10, C11, C16, C17 ── */
+
+      { id: 'data_ready', type: 'options', depth: 'deep',
+        title: 'Was the data feeding the pilots fit for the job?',
+        hint: 'Case C4. A pilot with a baseline can still be killed for the wrong reason if its inputs were unfit.',
+        options: [
+          { v: 0.10, l: 'Graded and fixed', desc: 'Checked pre-launch', d: { capture: -20 } },
+          { v: 0.45, l: 'Patchy',           desc: 'Known gaps',         d: { capture:  +8 } },
+          { v: 0.80, l: 'Not assessed',     desc: 'Nobody looked',      d: { capture: +22 } } ] },
+
+      { id: 'idle_share', type: 'exact-only', depth: 'deep', exact: true, units: ['usd', 'pct'],
+        range: [0.05, 0.30], exactLabel: 'Share deployed but unused',
+        title: 'How much is deployed but essentially nobody uses?',
+        hint: 'Case C10. Optional — 12% assumed. Distinct from spend that IS used but unmeasured.' },
+
+      { id: 'agent_share', type: 'exact-only', depth: 'deep', exact: true, units: ['usd', 'pct'],
+        range: [0.05, 0.40], exactLabel: 'Share badged as "agents"',
+        title: 'How much of the budget is on things called AI agents?',
+        hint: 'Case C11. Optional — 18% assumed.' },
+
+      { id: 'agent_real', type: 'options', depth: 'deep',
+        showIf: { ans: 'agent_share', op: '>', v: 0 },
+        title: 'Do those agents actually act, or do they answer?',
+        hint: 'Case C11. Gartner puts genuinely agentic builds at roughly 130 companies worldwide; the rest is relabelled RPA and chat.',
+        options: [
+          { v: 0.15, l: 'They act',    desc: 'Verified autonomy',  d: { audit: -18 } },
+          { v: 0.55, l: 'Mixed',       desc: 'Some are wrappers',  d: { audit: +10 } },
+          { v: 0.85, l: 'Relabelled',  desc: 'RPA or a chatbot',   d: { audit: +25 } } ] },
+
+      { id: 'shadow_share', type: 'exact-only', depth: 'deep', exact: true, units: ['usd', 'pct'],
+        range: [0.05, 0.35], exactLabel: 'Share used outside sanctioned tools',
+        title: 'Roughly how much AI use happens outside sanctioned tools?',
+        hint: 'Case C16. Optional — 15% assumed. This drives an unmeasurable, not a loss.' },
+
+      { id: 'correction_hrs', type: 'exact-only', depth: 'deep', exact: true, range: [200, 12000],
+        exactLabel: 'Hours per year re-correcting',
+        title: 'Staff hours a year spent re-correcting the same AI output',
+        hint: 'Case C17. Optional — 1,800 hours assumed.' },
+
+      { id: 'blended_rate', type: 'exact-only', depth: 'deep', exact: true, range: [45, 180],
+        exactLabel: 'Blended hourly cost (USD)',
+        title: 'Blended hourly cost of the people doing that correcting',
+        hint: 'Case C17. Optional — $85/hour assumed.' }
+    ],
+
+    /* Every leak is linear in `spend`, so every percentage below is independent of the
+       spend estimate. Shares are separate drivers, never complements — see header. */
+    leaks: [
+      { id: 'unprovable', cat: 'capture', case: 'C5',
+        name: 'Pilot spend whose result cannot be proven',
+        mul: [ { ans: 'spend' }, { ans: 'pilot_share', def: 0.40, range: [0.20, 0.70] }, { ans: 'baseline' } ],
+        why: 'With no pre-pilot baseline the delta is unprovable, so the spend can be defended neither way.' },
+
+      { id: 'untraced', cat: 'audit', case: 'C9',
+        name: 'Deployed spend with no line to margin',
+        mul: [ { ans: 'spend' }, { ans: 'deployed_share', def: 0.35, range: [0.15, 0.55] }, { ans: 'measure' } ],
+        why: 'Success recorded as activity rather than EBIT means nobody can say what the money returned.' },
+
+      { id: 'misallocated', cat: 'distort', case: 'C18',
+        name: 'Return forgone to front-office bias',
+        mul: [ { ans: 'spend' }, { ans: 'alloc' }, { lit: 0.15 } ],
+        why: 'Budget follows visible wins while the larger documented return sits in back-office automation.' },
+
+      { id: 'unfit_input', cat: 'capture', case: 'C4',
+        name: 'Pilots judged on unfit data',
+        /* The COMPLEMENT of C5: this is pilot spend that DOES have a baseline. Without
+           oneMinus the two would both draw on the whole pilot budget and double-count it. */
+        mul: [ { ans: 'spend' }, { ans: 'pilot_share', def: 0.40, range: [0.20, 0.70] },
+               { oneMinus: { ans: 'baseline' } }, { ans: 'data_ready', def: 0.45 } ],
+        why: 'A pilot with a baseline can still be killed for the wrong reason when its inputs were never fit for the job.' },
+
+      { id: 'idle', cat: 'audit', case: 'C10',
+        name: 'Deployed and idle',
+        mul: [ { ans: 'spend' }, { ans: 'idle_share', def: 0.12, range: [0.05, 0.30] } ],
+        why: 'Counting a deploy as the win means nobody notices the thing shipped and then sat there.' },
+
+      { id: 'agent_washed', cat: 'audit', case: 'C11',
+        name: 'Agent-washed spend measured against the wrong benchmark',
+        mul: [ { ans: 'spend' }, { ans: 'agent_share', def: 0.18, range: [0.05, 0.40] },
+               { ans: 'agent_real', def: 0.55 }, { lit: 0.40 } ],
+        why: 'An RPA script badged as an agent is held to expectations it was never built to meet, and gets cancelled for missing them.' },
+
+      { id: 'feedback_debt', cat: 'distort', case: 'C17',
+        name: 'Re-correcting the same output',
+        /* Hours x rate — both supplied figures, no rate constant, so nothing to fit. */
+        mul: [ { ans: 'correction_hrs', def: 1800, range: [200, 12000] },
+               { ans: 'blended_rate', def: 85, range: [45, 180] } ],
+        why: 'A tool that retains no feedback makes the same mistake indefinitely and someone fixes it every time.' },
+
+      { id: 'shadow_unknown', cat: 'distort', case: 'C16', kind: 'unmeasurable',
+        name: 'Spend whose real return is unknowable',
+        /* NOT a loss. Unmeasured shadow use makes the official number wrong in an unknown
+           direction — it can be hiding value as easily as hiding waste. Reported with a
+           figure, excluded from the headline, because calling it a loss would be a guess. */
+        mul: [ { ans: 'spend' }, { ans: 'shadow_share', def: 0.15, range: [0.05, 0.35] } ],
+        why: 'Usage happening outside sanctioned tools makes the official ROI wrong in a direction nobody can determine.' }
+    ],
+
+    multipliers: [],
+
+    /* Recommendations for the gated report; caveats verbatim from the golden dataset. */
+    recs: {
+      unprovable:    { t: 'Make a baseline snapshot mandatory before any pilot launches',
+                       d: 'Without a pre-pilot measurement the delta can never be proven; a snapshot costs a day and saves the argument.',
+                       caveat: 'Where this fails: a baseline that drifts for non-AI reasons, such as seasonality, credits or debits the pilot for weather it did not make.' },
+      untraced:      { t: 'Tie every deployed tool to one named EBIT lever',
+                       d: 'Activity metrics measure enthusiasm; one named margin line per tool measures value.',
+                       caveat: 'Where this fails: high engagement can genuinely precede value — a leading indicator misread as vanity gets a good tool killed.' },
+      misallocated:  { t: 'Re-allocate budget toward the highest-ROI back-office uses',
+                       d: 'The largest documented returns sit in back-office automation, where the least budget currently goes.',
+                       caveat: 'Where this fails: a front-office use with genuine strategic value that no ROI line captures.' },
+      unfit_input:   { t: 'Grade data readiness A–F as a formal pilot gate',
+                       d: 'A pilot on unfit data gets killed for the wrong reason; grade the inputs before judging the output.',
+                       caveat: 'Where this fails: clean data with the wrong feature — the pilot fails on relevance, not quality, and the grade looks fine.' },
+      idle:          { t: 'Replace the deploy gate with a value-realized gate',
+                       d: 'Counting a deploy as the win is how tools ship and sit idle; count value realized instead.',
+                       caveat: 'Where this fails: infrastructure deploys with legitimately no direct P&L of their own — platform work funds other tools’ value.' },
+      agent_washed:  { t: 'Verify capability before measuring against agent expectations',
+                       d: 'An RPA script badged as an agent fails agent benchmarks it was never built for; verify what a thing is before scoring it.',
+                       caveat: 'Where this fails: a real agent under-scoped so it looks like RPA — verification must test capability, not read the label.' },
+      feedback_debt: { t: 'Add a domain-specific adaptive layer that retains feedback',
+                       d: 'A tool that remembers corrections stops repeating the mistake that is currently being fixed by hand every week.',
+                       caveat: 'Where this fails: retained feedback that entrenches an early wrong pattern — memory without review compounds the error instead of the fix.' },
+      shadow_unknown:{ t: 'Measure real usage before judging any official pilot',
+                       d: 'Unmeasured shadow use makes the official number wrong in an unknown direction; measure first, judge second.',
+                       caveat: 'Where this fails: shadow usage that is genuinely unsafe, such as confidential data leaving through personal accounts — measurement alone does not make it acceptable.' }
+    },
+
+    /* pilot_share and deployed_share are disjoint slices of one budget, so they cannot both
+     * sit at their maximum. Without this the band's upper bound reached 140% of spend —
+     * a loss larger than the outlay, which is arithmetically possible only because the
+     * corner enumeration was combining inputs that cannot coexist. */
+    feasible: function (a) {
+      var n = function (v, d) { var x = parseFloat(v); return isFinite(x) ? x : d; };
+      // pilot, deployed-but-unmeasured and deployed-but-idle are disjoint slices of one budget
+      return n(a.pilot_share, 0.40) + n(a.deployed_share, 0.35) + n(a.idle_share, 0.12) <= 1.0;
+    }
+  };
+  root.SID_ENTERPRISE_AI = CFG;
+  if (typeof module !== 'undefined' && module.exports) module.exports = CFG;
+})(typeof globalThis !== 'undefined' ? globalThis : this);
