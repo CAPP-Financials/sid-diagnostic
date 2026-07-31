@@ -1,0 +1,63 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27><rect width=%2732%27 height=%2732%27 fill=%27%23F6F8F3%27/><rect y=%277%27 width=%2732%27 height=%275%27 fill=%27%23E9EDE4%27/><rect y=%2720%27 width=%2732%27 height=%275%27 fill=%27%23E9EDE4%27/><rect x=%273%27 y=%274%27 width=%273%27 height=%2724%27 fill=%27%23A32C22%27/></svg>"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Signal Integrity Diagnostic — Loyalty · Reward Programme</title>
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@600;700&family=Public+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+body{background:#E9EDE4;color:#16211C;font:15px/1.65 "Public Sans",system-ui,sans-serif;margin:0}
+.wrap{max-width:860px;margin:0 auto;padding:40px 28px}
+h1,h2,h3{font-family:"Zilla Slab",Georgia,serif;font-weight:600;line-height:1.15;margin:0}
+.mono{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
+.mast{border-bottom:2px solid #16211C;padding-bottom:14px;margin-bottom:22px}
+.kicker{font:600 10px "IBM Plex Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:#5A6560}
+h1{font-size:30px;margin:6px 0 2px}
+.headline{background:#F6F8F3;border:1px solid rgba(22,33,28,.16);border-top:2px solid #16211C;padding:18px 20px;margin:18px 0}
+.big{font:600 34px "IBM Plex Mono",monospace;color:#A32C22}
+.range{color:#5A6560;font-size:13px}
+.apart{font-size:13px;color:#5A6560;margin-top:6px}
+.prose{margin:.5rem 0;max-width:64ch}
+section.leak{border-top:1px solid rgba(22,33,28,.16);padding:16px 0}
+section.leak .top{display:flex;justify-content:space-between;gap:14px;align-items:baseline}
+section.leak h3{font-size:17px}
+.amt{font:600 17px "IBM Plex Mono",monospace;color:#A32C22;text-align:right;white-space:nowrap}
+.amt .p{display:block;font-weight:400;font-size:11px;color:#5A6560}
+section.contingent .amt,section.unmeasurable .amt{color:#5A6560}
+.rec{background:#F6F8F3;border:1px solid rgba(22,33,28,.14);padding:10px 12px;margin-top:8px;font-size:13.5px}
+.caveat{color:#A32C22;font-size:12.5px;margin-top:6px}
+.method{border-top:2px solid #16211C;margin-top:26px;padding-top:12px;color:#5A6560;font-size:12.5px;max-width:70ch}
+@media print{body{background:#fff}.wrap{padding:0}}
+</style></head><body><div class="wrap">
+<div class="mast"><div class="kicker">Signal Integrity Diagnostic · Loyalty · Reward Programme · Estimate tier · narrative: gemma4:12b (5/5 pieces gated in)</div>
+<h1>What the numbers leave out</h1></div>
+<p class="prose"><strong>Summary.</strong> The company faces an unrecorded annual loss of $1.91M. This amount represents 15.31% of the reward program value. The estimated range for this loss is between $574K and $4.78M. These figures indicate a significant financial impact on thes reward program.</p>
+<div class="headline"><div class="kicker">Unrecorded annual exposure</div>
+<div class="big mono">$1.91M</div>
+<div class="range mono">Range $574K – $4.78M · 15.31% of reward program value · Confidence tier: Estimate</div>
+
+
+</div>
+<section class="leak loss">
+  <div class="top"><h3>Incentive abuse and coupon stacking</h3><div class="amt">$863K
+    <span class="p">6.90% of reward program value</span></div></div>
+  <p class="prose">Incentive abuse and coupon stacking resulted in $863K in lost rewards. This represents 6.90% of the total reward program value. Current rules are not calibrated to customer value, allowing reward value to leak out at the bottom.</p>
+  <div class="rec"><strong>Replace blunt fraud rules with value-calibrated ones.</strong> Rules tuned to customer value stop the abuse without blocking the customers the programme exists to keep.<div class="caveat">Where this fails: power-user behaviour that looks like abuse — the heaviest legitimate users trip naive rules first.</div></div>
+</section>
+<section class="leak loss">
+  <div class="top"><h3>Data foundation rot</h3><div class="amt">$480K
+    <span class="p">3.84% of reward program value</span></div></div>
+  <p class="prose">Migration gaps and manual currency handling cause data integrity issues. This results in a lost value of $480K, which is 3.84% of the reward program value. These errors make downstream metrics unreliable.</p>
+  <div class="rec"><strong>Reconcile and establish a trusted baseline before any detection.</strong> Detection built on unreconciled data detects noise; the first work is making the data trustworthy.<div class="caveat">Where this fails: data that is clean but in the wrong unit — points and currency reconciling perfectly against the wrong thing.</div></div>
+</section>
+<section class="leak loss">
+  <div class="top"><h3>ROI inflated by unsubtracted fraud</h3><div class="amt">$334K
+    <span class="p">2.67% of reward program value</span></div></div>
+  <p class="prose">The reported ROI is inflated because it is calculated using the gross value of the reward program. The $334K in fraud represents 2.67% of the total program value, meaning budget allocation is based on inaccurate data.</p>
+  <div class="rec"><strong>Report fraud-adjusted ROI.</strong> Subtract fraud and data failures from campaign returns so budget is allocated on a real number.<div class="caveat">Where this fails: when the fraud estimate itself is unreliable, adjustment over-corrects and buries genuinely good campaigns.</div></div>
+</section>
+<section class="leak loss">
+  <div class="top"><h3>Cross-market knowledge silos</h3><div class="amt">$238K
+    <span class="p">1.90% of reward program value</span></div></div>
+  <p class="prose">Cross-market knowledge silos cost $238K, representing 1.90% of reward program value. This occurs when a failure in one market is repeated in another instead of being shared and prevented across the teams.</p>
+  <div class="rec"><strong>Stand up a shared failure registry with a cascade-speed metric.</strong> A failure found once should be prevented everywhere; measure how fast learnings actually cross markets.<div class="caveat">Where this fails: a market-specific failure wrongly generalized — not every local lesson transfers.</div></div>
+</section>
+<div class="method">Every figure above is computed by fixed arithmetic from the inputs; the narrative is machine-written on this machine and gated so it can quote only computed figures. Default rates are practitioner estimates, marked in the diagnostic. Where a recommendation is given, the condition under which it fails is stated with it.</div>
+</div></body></html>

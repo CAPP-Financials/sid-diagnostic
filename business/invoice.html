@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Invoice · Signal Integrity Diagnostic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --stock:#E9EDE4;
+    --stock-alt:#DCE3D4;
+    --paper:#F6F8F3;
+    --ink:#16211C;
+    --graphite:#5A6560;
+    --faint:#8A938C;
+    --variance:#A32C22;
+    --reconciled:#2F5D50;
+    --rule:rgba(22,33,28,.16);
+    --rule-soft:rgba(22,33,28,.08);
+    --sheet:190mm;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--stock);
+    color:var(--ink);
+    font-family:"Public Sans",system-ui,sans-serif;
+    font-size:10.5pt;
+    line-height:1.55;
+    padding:24px 16px 64px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .sheet{
+    width:var(--sheet);
+    max-width:100%;
+    margin:0 auto;
+    background:var(--paper);
+    border:1px solid var(--rule);
+    padding:18mm 16mm 14mm;
+  }
+
+  /* ---- masthead ---- */
+  .mast{display:flex;justify-content:space-between;align-items:flex-start;gap:24px}
+  .issuer-name{
+    font-family:"Zilla Slab",Georgia,serif;
+    font-weight:700;font-size:19pt;line-height:1.1;
+    letter-spacing:-.015em;margin:0;
+  }
+  .issuer-role{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:7.5pt;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--graphite);margin:6px 0 0;
+  }
+  .issuer-contact{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:8pt;color:var(--graphite);margin:10px 0 0;line-height:1.7;
+  }
+  .doctype{text-align:right;flex-shrink:0}
+  .doctype-lab{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:8pt;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--variance);margin:0;font-weight:600;
+  }
+  .doctype-no{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:12pt;font-weight:500;margin:4px 0 0;
+    font-variant-numeric:tabular-nums;
+  }
+
+  .rule-heavy{border:0;border-top:1.5px solid var(--ink);margin:14px 0 0}
+
+  /* ---- meta strip ---- */
+  .meta{
+    display:grid;
+    grid-template-columns:1.6fr 1fr 1fr;
+    gap:20px;
+    padding:14px 0 16px;
+    border-bottom:1px solid var(--rule);
+  }
+  .meta-lab{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:7pt;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--faint);margin:0 0 5px;
+  }
+  .meta-val{margin:0;font-size:10pt;line-height:1.5}
+  .meta-val strong{font-weight:600}
+  .meta .num{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;font-size:9.5pt}
+  .fill{color:var(--faint);border-bottom:1px dotted var(--faint);padding-bottom:1px}
+
+  /* ---- line items: green-bar ledger banding ---- */
+  table{width:100%;border-collapse:collapse;margin:18px 0 0}
+  thead th{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:7pt;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--faint);font-weight:500;text-align:left;
+    padding:0 8px 7px;border-bottom:1px solid var(--rule);
+  }
+  thead th.r{text-align:right}
+  tbody td{padding:11px 8px;vertical-align:top;border-bottom:1px solid var(--rule-soft)}
+  tbody tr:nth-child(odd) td{background:var(--stock)}
+  td.idx{
+    font-family:"IBM Plex Mono",monospace;font-size:8.5pt;
+    color:var(--faint);width:30px;font-variant-numeric:tabular-nums;
+  }
+  .li-title{font-weight:600;margin:0}
+  .li-desc{margin:3px 0 0;font-size:9pt;color:var(--graphite);line-height:1.5;max-width:92mm}
+  td.amt{
+    text-align:right;white-space:nowrap;
+    font-family:"IBM Plex Mono",monospace;font-size:10.5pt;
+    font-variant-numeric:tabular-nums;width:32mm;
+  }
+
+  /* ---- total ---- */
+  .totals{display:flex;justify-content:flex-end;margin-top:14px}
+  .totals-inner{width:78mm}
+  .trow{
+    display:flex;justify-content:space-between;align-items:baseline;
+    padding:5px 8px;font-size:9.5pt;
+  }
+  .trow .lab{font-family:"IBM Plex Mono",monospace;font-size:8pt;letter-spacing:.1em;text-transform:uppercase;color:var(--graphite)}
+  .trow .val{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
+  .due{
+    margin-top:6px;padding:11px 8px 12px;
+    border-top:1.5px solid var(--ink);
+    position:relative;
+  }
+  /* the variance hatch: on the diagnostic it marks what the books don't show.
+     here it marks what is not yet paid. */
+  .due::before{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:4px;
+    background:repeating-linear-gradient(135deg,var(--variance) 0 1.5px,transparent 1.5px 4px);
+  }
+  .due-row{display:flex;justify-content:space-between;align-items:baseline;padding-left:10px}
+  .due-lab{
+    font-family:"IBM Plex Mono",monospace;font-size:8pt;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--variance);font-weight:600;
+  }
+  .due-val{
+    font-family:"IBM Plex Mono",monospace;font-size:17pt;font-weight:600;
+    color:var(--variance);font-variant-numeric:tabular-nums;letter-spacing:-.01em;
+  }
+  .due-note{
+    font-family:"IBM Plex Mono",monospace;font-size:7.5pt;color:var(--graphite);
+    padding-left:10px;margin:3px 0 0;
+  }
+
+  /* ---- footer blocks ---- */
+  .blocks{
+    display:grid;grid-template-columns:1fr 1fr;gap:22px;
+    margin-top:26px;padding-top:16px;border-top:1px solid var(--rule);
+  }
+  .blk h3{
+    font-family:"IBM Plex Mono",monospace;font-size:7pt;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--faint);
+    font-weight:500;margin:0 0 8px;
+  }
+  .blk p{margin:0 0 5px;font-size:9pt;line-height:1.6}
+  .blk .k{
+    font-family:"IBM Plex Mono",monospace;font-size:8pt;
+    color:var(--graphite);display:inline-block;min-width:26mm;
+  }
+  .blk .v{font-family:"IBM Plex Mono",monospace;font-size:8.5pt;font-variant-numeric:tabular-nums}
+
+  .terms{
+    margin-top:20px;padding-top:12px;border-top:1px solid var(--rule-soft);
+    font-size:8.5pt;color:var(--graphite);line-height:1.65;
+  }
+  .terms strong{color:var(--ink);font-weight:600}
+
+  /* No accent bar here on purpose: the hatch on Amount due is the only
+     accent in the document, so it stays the thing the eye goes to. */
+  .stamp{
+    margin-top:16px;padding:9px 0 0;
+    border-top:1px solid var(--rule-soft);
+    font-family:"IBM Plex Mono",monospace;font-size:7.5pt;
+    color:var(--faint);line-height:1.7;
+  }
+
+  /* ---- fill-me banner, screen only ---- */
+  .todo{
+    width:var(--sheet);max-width:100%;margin:0 auto 18px;
+    background:#FFF4E8;border:1px solid #C9873F;border-left:3px solid #C9873F;
+    padding:12px 14px;font-size:9pt;line-height:1.6;color:#5C3D1A;
+  }
+  .todo h4{margin:0 0 6px;font-family:"IBM Plex Mono",monospace;font-size:8pt;letter-spacing:.12em;text-transform:uppercase}
+  .todo ul{margin:0;padding-left:18px}
+  .todo li{margin:2px 0}
+
+  @media print{
+    @page{size:A4;margin:0}
+    body{background:#fff;padding:0;font-size:10pt}
+    .sheet{width:auto;border:0;padding:16mm 15mm}
+    .todo{display:none}
+    tbody tr:nth-child(odd) td,.stamp{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    tr{page-break-inside:avoid}
+  }
+  @media (max-width:640px){
+    .mast{flex-direction:column;gap:14px}
+    .doctype{text-align:left}
+    .meta{grid-template-columns:1fr;gap:12px}
+    .blocks{grid-template-columns:1fr}
+    .totals-inner{width:100%}
+    td.amt{width:auto}
+  }
+</style>
+</head>
+<body>
+
+<div class="todo">
+  <h4>Before sending: fill these in</h4>
+  <ul>
+    <li>Every <span style="border-bottom:1px dotted #C9873F">dotted field</span> below is a placeholder. Nothing here is pre-filled with real account or tax data.</li>
+    <li>Invoicing as an individual, not as Capp Financial Services. That name is not a registered entity yet, so putting it on a payment document would misstate who the counterparty is.</li>
+    <li>Confirm your own GST position and whether this is an export of services before issuing. Do not copy the tax line as-is.</li>
+    <li>This banner does not print.</li>
+  </ul>
+</div>
+
+<div class="sheet">
+
+  <header class="mast">
+    <div>
+      <h1 class="issuer-name">Purushottam&nbsp;Kumar</h1>
+      <p class="issuer-role">Independent Consultant · Signal Integrity Diagnostic</p>
+      <p class="issuer-contact">
+        193purushottam@gmail.com<br>
+        <span class="fill">Street address, city, PIN</span><br>
+        <span class="fill">Phone</span> · PAN <span class="fill">ABCDE1234F</span>
+      </p>
+    </div>
+    <div class="doctype">
+      <p class="doctype-lab">Invoice</p>
+      <p class="doctype-no">SID-2026-<span class="fill">001</span></p>
+    </div>
+  </header>
+
+  <hr class="rule-heavy">
+
+  <section class="meta">
+    <div>
+      <p class="meta-lab">Billed to</p>
+      <p class="meta-val">
+        <strong class="fill">Client legal name</strong><br>
+        <span class="fill">Attn: name, title</span><br>
+        <span class="fill">Registered address</span><br>
+        <span class="fill">Tax ID / VAT no.</span>
+      </p>
+    </div>
+    <div>
+      <p class="meta-lab">Issued</p>
+      <p class="meta-val num fill">DD MMM 2026</p>
+      <p class="meta-lab" style="margin-top:12px">Billing period</p>
+      <p class="meta-val num fill">MMM 2026</p>
+    </div>
+    <div>
+      <p class="meta-lab">Due</p>
+      <p class="meta-val num fill">DD MMM 2026</p>
+      <p class="meta-lab" style="margin-top:12px">Terms</p>
+      <p class="meta-val num">Net 7</p>
+    </div>
+  </section>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:30px"></th>
+        <th>Description</th>
+        <th class="r">Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="idx">01</td>
+        <td>
+          <p class="li-title">Signal Integrity Retainer · <span class="fill">domain</span></p>
+          <p class="li-desc">Monthly reconciliation of reported figures against computed exposure: re-run, drift report, review call, and the updated working file. Scope and limits per the signed Retainer Agreement.</p>
+        </td>
+        <td class="amt">500.00</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="totals">
+    <div class="totals-inner">
+      <div class="trow">
+        <span class="lab">Subtotal</span>
+        <span class="val">USD 500.00</span>
+      </div>
+      <div class="trow">
+        <span class="lab">Tax</span>
+        <span class="val fill">0.00</span>
+      </div>
+      <div class="due">
+        <div class="due-row">
+          <span class="due-lab">Amount due</span>
+          <span class="due-val">$500.00</span>
+        </div>
+        <p class="due-note">Payable in advance for the period shown.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="blocks">
+    <div class="blk">
+      <h3>Remit to</h3>
+      <p><span class="k">Account name</span><span class="v fill">As per bank records</span></p>
+      <p><span class="k">Account no.</span><span class="v fill">00000000000</span></p>
+      <p><span class="k">IFSC</span><span class="v fill">ABCD0123456</span></p>
+      <p><span class="k">SWIFT / BIC</span><span class="v fill">For inbound foreign transfers</span></p>
+      <p><span class="k">Bank, branch</span><span class="v fill">Bank name, branch</span></p>
+    </div>
+    <div class="blk">
+      <h3>Reference on payment</h3>
+      <p style="font-family:'IBM Plex Mono',monospace;font-size:9pt">SID-2026-<span class="fill">001</span></p>
+      <p style="margin-top:10px;color:var(--graphite)">Quote this on the transfer so the payment reconciles against the engagement without a follow-up.</p>
+    </div>
+  </div>
+
+  <div class="terms">
+    <p style="margin:0 0 6px"><strong>Terms.</strong> Net 7 from the issue date, billed in advance for the period shown. The cycle begins once payment clears and that month's figures are supplied. Initial term is three months, then month to month with 30 days written notice.</p>
+    <p style="margin:0 0 6px"><strong>Scope.</strong> This invoice covers one monthly cycle of the retainer described in the signed Retainer Agreement. Implementation, remediation delivery, and audit or assurance opinions are outside it and are quoted separately.</p>
+    <p style="margin:0"><strong>Data.</strong> Each cycle runs on figures you supply. No system access is requested and no raw data leaves your environment.</p>
+  </div>
+
+  <div class="stamp">
+    Issued by Purushottam Kumar in an individual capacity. Tax treatment stated above is the issuer's own; confirm your withholding obligations under your jurisdiction before remitting.
+  </div>
+
+</div>
+
+</body>
+</html>

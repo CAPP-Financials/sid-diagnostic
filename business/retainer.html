@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Retainer Agreement · Signal Integrity Diagnostic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --stock:#E9EDE4;
+    --stock-alt:#DCE3D4;
+    --paper:#F6F8F3;
+    --ink:#16211C;
+    --graphite:#5A6560;
+    --faint:#8A938C;
+    --variance:#A32C22;
+    --reconciled:#2F5D50;
+    --rule:rgba(22,33,28,.16);
+    --rule-soft:rgba(22,33,28,.08);
+    --sheet:190mm;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--stock);
+    color:var(--ink);
+    font-family:"Public Sans",system-ui,sans-serif;
+    font-size:8.5pt;
+    line-height:1.38;
+    padding:24px 16px 64px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .sheet{
+    width:var(--sheet);max-width:100%;margin:0 auto;
+    background:var(--paper);border:1px solid var(--rule);
+    padding:10mm 12mm 8mm;
+  }
+
+  /* ---- masthead ---- */
+  .doctype-lab{
+    font-family:"IBM Plex Mono",monospace;font-size:7.5pt;
+    letter-spacing:.18em;text-transform:uppercase;color:var(--variance);
+    font-weight:600;margin:0;
+  }
+  h1{
+    font-family:"Zilla Slab",Georgia,serif;font-weight:700;
+    font-size:17pt;line-height:1.06;letter-spacing:-.015em;margin:4px 0 0;
+  }
+  .sub{margin:5px 0 0;color:var(--graphite);font-size:8.8pt;max-width:120mm}
+  .rule-heavy{border:0;border-top:1.5px solid var(--ink);margin:9px 0 0}
+
+  .keyline{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:14px;
+    padding:6px 0 7px;border-bottom:1px solid var(--rule);
+  }
+  .kl-lab{
+    font-family:"IBM Plex Mono",monospace;font-size:6.5pt;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin:0 0 4px;
+  }
+  .kl-val{
+    font-family:"IBM Plex Mono",monospace;font-size:10.5pt;margin:0;
+    font-variant-numeric:tabular-nums;
+  }
+  .fill{color:var(--faint);border-bottom:1px dotted var(--faint);padding-bottom:1px}
+
+  /* ---- sections ---- */
+  section{margin-top:8px}
+  h2{
+    font-family:"IBM Plex Mono",monospace;font-size:6.5pt;
+    letter-spacing:.15em;text-transform:uppercase;color:var(--faint);
+    font-weight:500;margin:0 0 6px;padding-bottom:4px;
+    border-bottom:1px solid var(--rule-soft);
+  }
+  p{margin:0 0 4px}
+  /* Marks the one deliverable that is not part of the recurring cycle. */
+  .only{
+    font-family:"IBM Plex Mono",monospace;font-size:6.2pt;font-style:normal;
+    letter-spacing:.11em;text-transform:uppercase;color:var(--variance);
+    border:1px solid var(--variance);border-radius:2px;
+    padding:0 3px;margin-left:5px;vertical-align:1px;white-space:nowrap;
+  }
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .two-wide{display:grid;grid-template-columns:1.05fr 1fr;gap:16px;margin-top:8px}
+  .two-wide > div > h2{margin-top:0}
+
+  /* ---- green-bar banded lists ---- */
+  .bands{margin:0;padding:0;list-style:none}
+  .bands li{
+    display:grid;grid-template-columns:14px 1fr;gap:6px;
+    padding:3px 6px;align-items:start;
+  }
+  .bands li:nth-child(odd){background:var(--stock)}
+  /* Clause numbering, not an editorial marker: these get cited by number
+     in the invoice and in any dispute, so they read at body weight. */
+  .bands .n{font-weight:600;font-variant-numeric:tabular-nums}
+  .bands strong{font-weight:600;display:block}
+  .bands span.d{color:var(--graphite);font-size:7.8pt;line-height:1.38;display:block;margin-top:1px}
+
+  /* ---- plain rule list ---- */
+  .plain{margin:0;padding:0;list-style:none}
+  .plain li{
+    padding:4px 0 4px 13px;position:relative;
+    border-bottom:1px solid var(--rule-soft);font-size:8pt;line-height:1.38;
+  }
+  .plain li::before{
+    content:"";position:absolute;left:2px;top:10px;
+    width:5px;height:1px;background:var(--faint);
+  }
+  .plain li:last-child{border-bottom:0}
+
+  /* ---- monthly cycle ---- */
+  .tl{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--rule-soft)}
+  .tl div{padding:5px 6px;border-right:1px solid var(--rule-soft)}
+  .tl div:last-child{border-right:0}
+  .tl div:nth-child(even){background:var(--stock)}
+  .tl .day{
+    font-family:"IBM Plex Mono",monospace;font-size:6.5pt;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--variance);margin:0 0 3px;font-weight:600;
+  }
+  .tl .what{margin:0;font-size:7.8pt;line-height:1.35}
+
+  /* ---- confidence ladder: carried from the tool ---- */
+  .tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--rule-soft)}
+  .tier{padding:6px 8px;position:relative;border-right:1px solid var(--rule-soft)}
+  .tier:last-child{border-right:0}
+  .tier:nth-child(odd){background:var(--stock)}
+  .tier-name{
+    font-family:"IBM Plex Mono",monospace;font-size:7pt;letter-spacing:.13em;
+    text-transform:uppercase;margin:0 0 3px;font-weight:600;
+  }
+  .tier-d{margin:0;font-size:7.8pt;color:var(--graphite);line-height:1.35}
+  .t-est .tier-name{color:var(--variance)}
+  .t-ref .tier-name{color:var(--graphite)}
+  .t-ver .tier-name{color:var(--reconciled)}
+  .t-est::before{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:4px;
+    background:repeating-linear-gradient(135deg,var(--variance) 0 1.5px,transparent 1.5px 4px);
+  }
+
+  /* ---- fee ---- */
+  .fee{
+    display:flex;justify-content:space-between;align-items:baseline;
+    padding:8px 0 0;margin-top:11px;border-top:1.5px solid var(--ink);
+  }
+  .fee-lab{
+    font-family:"IBM Plex Mono",monospace;font-size:8pt;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--graphite);
+  }
+  .fee-val{
+    font-family:"IBM Plex Mono",monospace;font-size:17pt;font-weight:600;
+    font-variant-numeric:tabular-nums;letter-spacing:-.01em;
+  }
+  .fee-val small{font-size:9pt;font-weight:500;color:var(--graphite);letter-spacing:.05em}
+
+  /* ---- signature ---- */
+  .sign{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:10px}
+  .sig-line{border-bottom:1px solid var(--ink);height:9mm}
+  .sig-lab{
+    font-family:"IBM Plex Mono",monospace;font-size:6.5pt;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--faint);margin:4px 0 0;
+  }
+
+  .foot{
+    margin-top:7px;padding-top:5px;border-top:1px solid var(--rule-soft);
+    font-family:"IBM Plex Mono",monospace;font-size:6.5pt;color:var(--faint);line-height:1.55;
+  }
+
+  .todo{
+    width:var(--sheet);max-width:100%;margin:0 auto 18px;
+    background:#FFF4E8;border:1px solid #C9873F;padding:12px 14px;
+    font-size:9pt;line-height:1.6;color:#5C3D1A;
+  }
+  .todo h4{margin:0 0 6px;font-family:"IBM Plex Mono",monospace;font-size:8pt;letter-spacing:.12em;text-transform:uppercase}
+  .todo ul{margin:0;padding-left:18px}
+  .todo li{margin:2px 0}
+
+  @media print{
+    @page{size:A4;margin:0}
+    body{background:#fff;padding:0;font-size:8.5pt}
+    .sheet{width:auto;border:0;padding:8mm 13mm 6mm}
+    .todo{display:none}
+    .bands li:nth-child(odd),.tl div:nth-child(even),.tier{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    section,li,.tier{page-break-inside:avoid}
+  }
+  @media (max-width:640px){
+    .keyline,.tl,.tiers,.two,.two-wide,.sign{grid-template-columns:1fr}
+    .tl div{border-right:0;border-bottom:1px solid var(--rule-soft)}
+  }
+</style>
+</head>
+<body>
+
+<div class="todo">
+  <h4>Before sending: decisions baked in</h4>
+  <ul>
+    <li>Client name, domain, start date, and jurisdiction are placeholders. Nothing is pre-filled.</li>
+    <li><strong>Three-month initial term.</strong> Month one carries the full baseline, which is most of the work. Without a minimum, a client takes the baseline for $500 and leaves. Change it if you want, but know what you are giving up.</li>
+    <li>Signed in your personal name, not Capp Financial Services, since that entity does not exist yet.</li>
+    <li>The limits and data clauses are what make $500 credible rather than suspiciously cheap. Do not soften them to win a deal.</li>
+    <li>This banner does not print.</li>
+  </ul>
+</div>
+
+<div class="sheet">
+
+  <header>
+    <p class="doctype-lab">Retainer Agreement</p>
+    <h1>Signal Integrity Diagnostic</h1>
+    <p class="sub">A standing reconciliation of what your books record against what the same figures imply. Re-run every month, so the gap is tracked as it moves rather than measured once.</p>
+  </header>
+
+  <hr class="rule-heavy">
+
+  <div class="keyline">
+    <div>
+      <p class="kl-lab">Client</p>
+      <p class="kl-val fill">Legal name</p>
+    </div>
+    <div>
+      <p class="kl-lab">Domain</p>
+      <p class="kl-val fill">Banking</p>
+    </div>
+    <div>
+      <p class="kl-lab">Term</p>
+      <p class="kl-val">Monthly</p>
+    </div>
+    <div>
+      <p class="kl-lab">Fee</p>
+      <p class="kl-val">$500 / mo</p>
+    </div>
+  </div>
+
+  <div class="two-wide">
+   <div>
+    <h2>What you receive, every month</h2>
+    <ol class="bands">
+      <li>
+        <span class="n">1.</span>
+        <span>
+          <strong>Reconciliation, re-run</strong>
+          <span class="d">Your current figures against computed exposure. Every leak path shown as arithmetic you can multiply by hand.</span>
+        </span>
+      </li>
+      <li>
+        <span class="n">2.</span>
+        <span>
+          <strong>Drift report</strong>
+          <span class="d">What moved since last month, what closed, what opened. The point of a standing engagement: a one-off number goes stale, a tracked one does not.</span>
+        </span>
+      </li>
+      <li>
+        <span class="n">3.</span>
+        <span>
+          <strong>Review call, 30 minutes</strong>
+          <span class="d">Model open, assumptions challenged, file corrected in the room.</span>
+        </span>
+      </li>
+      <li>
+        <span class="n">4.</span>
+        <span>
+          <strong>The working file, kept current</strong>
+          <span class="d">Yours to keep and re-run yourself. It does not expire and is not licensed back to me.</span>
+        </span>
+      </li>
+      <li>
+        <span class="n">5.</span>
+        <span>
+          <strong>Baseline diagnostic and roadmap <em class="only">month one only</em></strong>
+          <span class="d">The full first-pass build: ranked leak paths with intervals, the remediation roadmap, and a 60-minute walkthrough. Every month after is measured against this baseline.</span>
+        </span>
+      </li>
+    </ol>
+   </div>
+
+   <div>
+    <h2>What this does not do</h2>
+    <ul class="plain">
+      <li>It is not an audit and carries no assurance opinion. It cannot be filed or relied on as one.</li>
+      <li>It does not monitor your systems. Nothing is connected and nothing polls. It runs on figures you send each month, and if they do not arrive the cycle does not run.</li>
+      <li>It does not measure your organisation. Where you supply a band rather than a figure, the output is an estimate built on practitioner rates, and every such line says so.</li>
+      <li>It does not include implementation. Fixing what the diagnostic finds is separate work, quoted separately, and you may give it to someone else.</li>
+      <li>It is not legal, tax, or regulatory advice.</li>
+      <li>It needs no system access, credentials, or data export. If a question cannot be answered from figures you already hold, it stays unanswered and the range widens to show it.</li>
+    </ul>
+   </div>
+  </div>
+
+  <section>
+    <h2>How each month runs</h2>
+    <div class="tl">
+      <div>
+        <p class="day">Day 1</p>
+        <p class="what">You send the month's figures on the same intake sheet each time. About fifteen minutes.</p>
+      </div>
+      <div>
+        <p class="day">Days 2 to 4</p>
+        <p class="what">Reconciliation re-run. Leak paths recomputed against the standing baseline.</p>
+      </div>
+      <div>
+        <p class="day">Day 5</p>
+        <p class="what">Drift report issued. What moved, what closed, what opened, and what it is worth.</p>
+      </div>
+      <div>
+        <p class="day">Days 6 to 8</p>
+        <p class="what">Review call held, corrections applied, updated file handed over.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>What the number is worth, and when</h2>
+    <div class="tiers">
+      <div class="tier t-est">
+        <p class="tier-name">Estimate</p>
+        <p class="tier-d">Banded inputs. The honest ceiling for a questionnaire. Wide ranges, stated as such.</p>
+      </div>
+      <div class="tier t-ref">
+        <p class="tier-name">Refined</p>
+        <p class="tier-d">Exact figures supplied for the lines that matter. Ranges narrow because your inputs did.</p>
+      </div>
+      <div class="tier t-ver">
+        <p class="tier-name">Verified</p>
+        <p class="tier-d">Requires source documents and a separate agreement. Not reachable inside this retainer.</p>
+      </div>
+    </div>
+    <p style="margin-top:5px;font-size:7.8pt;color:var(--graphite)">Ranges narrow month over month as real figures replace bands. Every line states the tier it sits at.</p>
+  </section>
+
+  <div class="two" style="margin-top:8px">
+    <div>
+      <h2>Your data</h2>
+      <p>Each cycle runs on figures you provide. No credentials are requested, no systems are connected, and no raw records are transferred or retained.</p>
+      <p>Working files stay on an encrypted machine and are deleted 60 days after the retainer ends unless you ask otherwise, in writing.</p>
+      <p>Anything you share is confidential and is not reused, resold, or named in marketing without your written consent.</p>
+    </div>
+    <div>
+      <h2>Terms</h2>
+      <p>$500 per month, billed in advance. The first cycle begins when the opening figures arrive.</p>
+      <p>Initial term is three months, because month one carries the baseline build. After that it continues month to month, and either party may end it with 30 days written notice.</p>
+      <p>If the baseline does not hold up against your own numbers at the month-one walkthrough, the retainer is cancelled and month one is refunded in full. The file is still yours.</p>
+      <p>Governed by the laws of <span class="fill">jurisdiction</span>.</p>
+    </div>
+  </div>
+
+  <div class="fee">
+    <span class="fee-lab">Monthly, fixed</span>
+    <span class="fee-val">$500 <small>/ month</small></span>
+  </div>
+
+  <div class="sign">
+    <div>
+      <div class="sig-line"></div>
+      <p class="sig-lab">For the client · name, title, date</p>
+    </div>
+    <div>
+      <div class="sig-line"></div>
+      <p class="sig-lab">Purushottam Kumar · date</p>
+    </div>
+  </div>
+
+  <p class="foot">
+    Entered into by Purushottam Kumar in an individual capacity. This document is the whole agreement between the parties for the work described and replaces anything discussed before it.
+  </p>
+
+</div>
+
+</body>
+</html>
