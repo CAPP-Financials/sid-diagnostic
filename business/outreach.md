@@ -2,7 +2,16 @@
 
 _Built 2026-07-31. Vertical: loyalty and retail. Offer: $500/month Signal Integrity retainer._
 
-**Read [prospects.md](prospects.md) first.** The NDA check is a hard gate on everything below.
+**Read [prospects.md](prospects.md) first.** Per-prospect research method is in
+[signal-check.md](signal-check.md) — the opening line does not work without it.
+
+> **DECIDED 2026-07-31: Version B is the operative copy.** Rather than wait on the EasyRewardz paperwork,
+> the client-specific figures are simply not used. Version A is retained below marked DO NOT SEND, in case
+> the position is ever cleared and you want the sharper proof line.
+>
+> **This decision unblocks outreach entirely.** Combined with the Tier A2 prospect list, which is a
+> competitor platform's client roster and therefore carries no non-solicit exposure, there is nothing left
+> waiting on a legal answer. You can send today.
 
 ---
 
@@ -36,9 +45,10 @@ verifiably true and useful even to someone who never buys.
 
 ---
 
-## Version A — use only if the NDA check clears
+## Version A — DO NOT SEND
 
-Specific client figures ($8M, 6% churn, 8.2x ROI) are permitted.
+Uses specific client figures ($8M, 6% churn, 8.2x ROI) that may be covered by an EasyRewardz client NDA.
+Kept only in case that position is formally cleared later. **The operative copy is Version B, below.**
 
 ### A1. First touch, email
 
@@ -102,9 +112,11 @@ this email does not apply to that prospect. Do not soften it into a generic open
 
 ---
 
-## Version B — use if client figures are restricted
+## Version B — OPERATIVE COPY, send this
 
-Same structure, method and scale described without the client-specific numbers.
+Method and scale described without any client-specific figures. Nothing here needs legal clearance. The
+proof line is weaker on numbers and stronger on specificity, which for a cold email is close to an even
+trade: the app-review observation is doing most of the work, not the credential.
 
 ### B1. First touch, email
 
@@ -183,7 +195,7 @@ These are deliverability and legal requirements, not style preferences.
 
 ## Open items
 
-- [ ] NDA and non-solicit check **(blocks everything above)**
+- [x] Decide Version A or B — **resolved 2026-07-31, Version B, no legal dependency remains**
 - [ ] Set up and warm a dedicated sending address, separate from job-application email
-- [ ] For each Tier A prospect, find and record the real app-review complaint
-- [ ] Decide Version A or Version B once the NDA position is known
+- [ ] For each of the ten Tier A2 prospects, run the [signal check](signal-check.md) and record the quote
+- [ ] Name one person per company (see the note on sourcing contacts in `signal-check.md`)

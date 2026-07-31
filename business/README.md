@@ -9,8 +9,9 @@ Built 2026-07-31.
 |---|---|---|
 | [retainer.html](retainer.html) | The contract. One page A4, $500/month, three-month initial term. | Ready, needs placeholders filled |
 | [invoice.html](invoice.html) | Monthly invoice, billed in advance. | Ready, needs your bank and PAN details |
-| [prospects.md](prospects.md) | ICP, scoring rubric, sourcing method, starter list. | Ready, needs extending to 10 names |
-| [outreach.md](outreach.md) | Email and LinkedIn sequences, two versions. | Blocked on the NDA check |
+| [prospects.md](prospects.md) | ICP, scoring rubric, sourcing method, ten named candidates. | Ready |
+| [outreach.md](outreach.md) | Email and LinkedIn sequences. Version B is operative. | Ready to send |
+| [signal-check.md](signal-check.md) | Per-prospect research method. The opening line depends on it. | Run before any email |
 | [linkedin-launch.md](linkedin-launch.md) | Launch post for the free diagnostic, plus prepared replies. | Ready to post |
 | [automation.md](automation.md) | What to automate and when. Recommendation is not yet. | Reference |
 | [measure.mjs](measure.mjs) | Checks the contract and invoice still fit one A4 page. | Run after any edit |
@@ -18,8 +19,9 @@ Built 2026-07-31.
 
 ## Before anything goes out
 
-1. **Check the EasyRewardz employment agreement** for non-solicit and NDA scope. This gates all outreach and
-   decides whether you use Version A or Version B of the copy. See the conflict section in `prospects.md`.
+1. **Outreach is unblocked.** Version B is the operative copy and uses no client-specific figures, and the
+   Tier A2 prospect list is a competitor platform's roster, so no non-solicit exposure attaches. Nothing
+   waits on the EasyRewardz paperwork. Read that agreement anyway before ever using Version A.
 2. **Fill the placeholders.** Every dotted field in the two HTML documents is empty on purpose. Nothing is
    pre-filled with real account or tax data.
 3. **Confirm your GST position** and whether this counts as an export of services. The tax line on the
