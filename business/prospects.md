@@ -30,9 +30,12 @@ Lead with loyalty and every number in the email is one you actually produced.
 
 1. **A running loyalty program with real reward liability.** No program means no reward-value figures to
    reconcile, and the diagnostic has nothing to compute against.
-2. **Revenue roughly $30M–$800M** (₹250 cr – ₹6,500 cr). Large enough that a 0.1% leak is worth more than
-   the retainer by two orders of magnitude. Small enough that the person who owns the number will take a
-   meeting.
+2. **Annual reward-program value above roughly $500K.** _Revised 2026-07-31, down from a $30M revenue
+   floor._ Revenue was the wrong gate. What matters is the value flowing through the programme, because
+   that is the denominator the leak is computed against. A ₹100 cr D2C brand issuing $600K in rewards with
+   10% leakage carries $60K of exposure, against $6K a year of retainer. That is a defensible ratio and it
+   opens the entire Indian D2C segment, which the old floor excluded for no good reason. The diagnostic's
+   own lowest band starts at "Under $1M", so the engine was always built for this size.
 3. **A named owner of the loyalty P&L.** If nobody owns it, nobody buys a diagnostic of it.
 4. **Monthly figures actually exist and can be sent.** The retainer's cycle dies if intake does not arrive.
    Ask this in discovery, not after signing.
@@ -115,9 +118,42 @@ outreach**, these move.
 Tata brands, Shell, Puma, Asics, Fossil, Sephora, Jotun, Domino's and the rest of the enterprise loyalty
 roster. Correct ICP on paper, impossible to transact with as an individual. Park until there is an entity.
 
-**This list is deliberately short and honest.** Three genuinely approachable names is a starting point, not
-a finished pipeline. Run the sourcing method above to extend it — that is the repeatable asset, the list is
-just its first output.
+### Tier A2 — Indian D2C, sourced from a competitor vendor's case-study index (2026-07-31)
+
+Pulled from Nector's public case-study pages. **Every name here is verified to run a loyalty programme**,
+because a case study existing is proof of exactly that, and it is the single hardest criterion to check
+from outside. Sizes are **not** verified. Work the reward-value question in discovery, not before.
+
+**This list structurally avoids the EasyRewardz conflict.** These are a competing platform's clients, so
+the non-solicit concern does not attach to them. If the exit paperwork turns out to restrict the client
+list, this segment is still open. That makes competitor-vendor sourcing the safest lane, not just the most
+productive one.
+
+Best candidates by likely reward-programme scale, strongest first:
+
+| Company | Category | Why this one |
+|---|---|---|
+| Plum | Beauty, skincare | Well-funded, wide offline plus online distribution, programme likely at real scale |
+| Pilgrim | Beauty, personal care | Fast-scaling, heavy repeat-purchase category where points liability accumulates |
+| XYXX | Apparel, innerwear | Repeat-purchase staple category, strong D2C plus retail mix |
+| Innovist | Beauty, personal care | Runs multiple brands, so cross-brand points logic is exactly where reconciliation breaks |
+| Zouk | Fashion, accessories | Funded, omnichannel, growing store footprint |
+| Bonkers Corner | Fashion, apparel | High-volume youth apparel, heavy discount-and-points interaction |
+| R for Rabbit | Baby care | Established, offline plus online, long customer lifecycle |
+| Ugaoo | Home, garden | Funded, omnichannel, repeat purchase |
+| Headphone Zone | Audio retail | Published 18.5% loyalty-driven revenue, so the programme is material and they already measure it |
+| Deconstruct | Skincare | Innovist stable, same cross-brand angle |
+
+Also on the list and worth checking if the above stall: Vilvah Store, Kiro, 82E, Amrutam, SuperYou,
+Beastlife, Sweet Karam Coffee, Two Brothers Organic Farms, Haus and Kinder, Cubelelo, Pashtush,
+Harisson Bags, 9shines label, Shop The Arena, All Things Baby, Krishna Ayurveda, Nutrikorner.
+
+**Excluded from the above on purpose:** Tata Nutrikorner (enterprise procurement, see Tier C), and the
+several entries published anonymously as "a leading D2C skincare brand" and similar, which cannot be
+approached because they are not named.
+
+**Extend it yourself the same way.** Capillary, Xeno, Zinrelo, and RewardPort all publish equivalent
+rosters. That method is the durable asset; this table is just its first output.
 
 ---
 
@@ -163,8 +199,10 @@ I have not seen these documents and cannot advise on them. This is a flag, not a
 
 ## Open items
 
-- [ ] Check EasyRewardz employment agreement for non-solicit and NDA scope **(blocks all outreach)**
-- [ ] Extend Tier A to 10 named companies using the sourcing method
-- [ ] For each, name one person and their title
-- [ ] Confirm each has a loyalty program with real reward liability, not a discount card
-- [ ] Run the app-review check on each and record the specific complaint found
+- [ ] Check EasyRewardz employment agreement for non-solicit and NDA scope. **Gates Version A copy and any
+      EasyRewardz-client approach. Does NOT gate the Tier A2 list above**, which is a competitor's roster.
+- [x] Extend to 10 named companies — done 2026-07-31, Tier A2, all verified to run loyalty programmes
+- [ ] For each of the ten, name one person and their title (LinkedIn, not a scraped list)
+- [ ] Confirm reward-programme value clears roughly $500K, in discovery rather than before
+- [ ] Run the app-review check on each and record the specific complaint found. This is the line that makes
+      the first email land, and without it that prospect is not ready to contact.
